@@ -3,87 +3,123 @@ package com.example.btl_android;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.LayoutInflater;
 import android.widget.TextView;
-import android.widget.Button;
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.ListenerRegistration;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/** RecyclerView + Adapter + ViewHolder giống bài mẫu quản lý sinh viên. */
 public class RecordsActivity extends AppCompatActivity {
-    private String role="";
-    private final List<DocumentSnapshot> records=new ArrayList<>();
+    private String role = "";
+    private final List<DocumentSnapshot> records = new ArrayList<>();
     private ListenerRegistration listener;
-    private RecordsAdapter adapter;
-    private TextView empty;
-    @Override protected void onCreate(Bundle b){
-        super.onCreate(b);App.requireLogin(this);if(App.user()==null)return;
-        setContentView(R.layout.activity_records); App.applyInsets(this);
-        // Quay về màn hình trước, giữ nguyên trạng thái đăng nhập Firebase.
+    private RecordAdapter adapter;
+    private TextView txtEmpty;
+    private RecyclerView rcvRecords;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        App.requireLogin(this);
+        if (App.user() == null) return;
+        setContentView(R.layout.activity_records);
+        App.applyInsets(this);
+        mapping();
+
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-        empty=findViewById(R.id.txtEmpty);
-        RecyclerView recycler=findViewById(R.id.recycler);
-        recycler.setLayoutManager(new LinearLayoutManager(this));
-        adapter=new RecordsAdapter(); recycler.setAdapter(adapter);
-        App.db().collection("users").document(App.uid()).get().addOnSuccessListener(d->{
-            role=App.str(d,"role");
-            if(!role.equals("doctor")&&!role.equals("patient")){App.logout(this);return;}
-            String filter=role.equals("doctor")?"doctorId":"patientId";
-            listener=App.db().collection("medical_records").whereEqualTo(filter,App.uid()).addSnapshotListener((snap,e)->{
-                if(e!=null){empty.setText("Lỗi tải bệnh án: "+e.getLocalizedMessage());return;}
-                records.clear(); if(snap!=null)for(QueryDocumentSnapshot r:snap)records.add(r);
-                Collections.sort(records,(a,c)->{
-                    Timestamp at=a.getTimestamp("visitAt"),ct=c.getTimestamp("visitAt");
-                    if(at==null||ct==null)return 0;return ct.compareTo(at);
-                });
-                empty.setText(records.isEmpty()?"Chưa có bệnh án":"Số bệnh án: "+records.size());
-                adapter.notifyDataSetChanged();
-            });
-        });
+        adapter = new RecordAdapter(records, this::showRecord);
+        rcvRecords.setLayoutManager(new LinearLayoutManager(this));
+        rcvRecords.setAdapter(adapter);
+        loadRecords();
     }
-    @Override protected void onDestroy(){if(listener!=null)listener.remove();super.onDestroy();}
-    private void showRecord(DocumentSnapshot d){
-        App.db().collection("treatment_plans").document(d.getId()).get()
-                .addOnSuccessListener(t->{
-                    String detail="Bệnh nhân: "+App.str(d,"patientName")+"\nBác sĩ: "+App.str(d,"doctorName")
-                            +"\nNgày khám: "+App.date(d.getTimestamp("visitAt"))
-                            +"\n\nCHẨN ĐOÁN\n"+App.str(d,"diagnosis")
-                            +"\n\nĐƠN THUỐC\n"+App.str(d,"prescription")
-                            +"\n\nGHI CHÚ\n"+App.str(d,"notes")
-                            +"\n\nPHÁC ĐỒ ĐIỀU TRỊ\n";
-                    if(t.exists()) detail+="Tên thuốc: "+App.str(t,"medicine")+"\nCách dùng: "+App.str(t,"method")
-                            +"\nSố lần/ngày: "+t.getLong("timesPerDay")+"\nMục đích: "+App.str(t,"purpose")
-                            +"\nHướng dẫn: "+App.str(t,"guide");
-                    else detail+="Chưa có phác đồ";
-                    AlertDialog.Builder alert=new AlertDialog.Builder(this).setTitle("Chi tiết bệnh án").setMessage(detail).setNegativeButton("Đóng",null);
-                    if(role.equals("doctor"))alert.setPositiveButton("Chỉnh sửa",(dia,w)->{
-                        Intent i=new Intent(this,RecordEditorActivity.class);i.putExtra("appointmentId",d.getId());startActivity(i);
-                    });
-                    alert.show();
-                }).addOnFailureListener(e->App.error(this,e));
+
+    private void mapping() {
+        txtEmpty = findViewById(R.id.txtEmpty);
+        rcvRecords = findViewById(R.id.recycler);
     }
-    private class RecordsAdapter extends RecyclerView.Adapter<RecordsAdapter.Holder>{
-        class Holder extends RecyclerView.ViewHolder {
-            TextView title,info;Button btn;
-            Holder(View v){super(v);title=v.findViewById(R.id.txtTitle);info=v.findViewById(R.id.txtInfo);btn=v.findViewById(R.id.btnDetail);}
-        }
-        @NonNull @Override public Holder onCreateViewHolder(@NonNull ViewGroup p,int t){return new Holder(LayoutInflater.from(p.getContext()).inflate(R.layout.item_record,p,false));}
-        @Override public int getItemCount(){return records.size();}
-        @Override public void onBindViewHolder(@NonNull Holder h,int p){
-            DocumentSnapshot d=records.get(p);
-            h.title.setText(role.equals("doctor")?"Bệnh nhân: "+App.str(d,"patientName"):"Bác sĩ: "+App.str(d,"doctorName"));
-            h.info.setText("Ngày khám: "+App.date(d.getTimestamp("visitAt"))+"\nChẩn đoán: "+App.str(d,"diagnosis"));
-            h.btn.setOnClickListener(v->showRecord(d));
-        }
+
+    private void loadRecords() {
+        App.db().collection("users").document(App.uid()).get()
+                .addOnSuccessListener(user -> {
+                    role = App.str(user, "role");
+                    if (!"doctor".equals(role) && !"patient".equals(role)) {
+                        App.logout(this);
+                        return;
+                    }
+                    adapter.setRole(role);
+                    String key = "doctor".equals(role) ? "doctorId" : "patientId";
+                    listener = App.db().collection("medical_records")
+                            .whereEqualTo(key, App.uid())
+                            .addSnapshotListener((snapshot, error) -> {
+                                if (error != null) {
+                                    txtEmpty.setText("Lỗi tải bệnh án: " + error.getLocalizedMessage());
+                                    return;
+                                }
+                                records.clear();
+                                if (snapshot != null) {
+                                    for (QueryDocumentSnapshot record : snapshot) records.add(record);
+                                }
+                                Collections.sort(records, (a, b) -> {
+                                    Timestamp at = a.getTimestamp("visitAt");
+                                    Timestamp bt = b.getTimestamp("visitAt");
+                                    if (at == null || bt == null) return 0;
+                                    return bt.compareTo(at);
+                                });
+                                txtEmpty.setText(records.isEmpty()
+                                        ? "Chưa có bệnh án" : "Số bệnh án: " + records.size());
+                                adapter.notifyDataSetChanged();
+                            });
+                })
+                .addOnFailureListener(error -> App.error(this, error));
+    }
+
+    private void showRecord(DocumentSnapshot document) {
+        App.db().collection("treatment_plans").document(document.getId()).get()
+                .addOnSuccessListener(plan -> {
+                    String detail = "Bệnh nhân: " + App.str(document, "patientName")
+                            + "\nBác sĩ: " + App.str(document, "doctorName")
+                            + "\nNgày khám: " + App.date(document.getTimestamp("visitAt"))
+                            + "\n\nCHẨN ĐOÁN\n" + App.str(document, "diagnosis")
+                            + "\n\nĐƠN THUỐC\n" + App.str(document, "prescription")
+                            + "\n\nGHI CHÚ\n" + App.str(document, "notes")
+                            + "\n\nPHÁC ĐỒ ĐIỀU TRỊ\n";
+                    if (plan.exists()) {
+                        detail += "Tên thuốc: " + App.str(plan, "medicine")
+                                + "\nCách dùng: " + App.str(plan, "method")
+                                + "\nSố lần/ngày: " + plan.getLong("timesPerDay")
+                                + "\nMục đích: " + App.str(plan, "purpose")
+                                + "\nHướng dẫn: " + App.str(plan, "guide");
+                    } else {
+                        detail += "Chưa có phác đồ";
+                    }
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(this)
+                            .setTitle("Chi tiết bệnh án")
+                            .setMessage(detail)
+                            .setNegativeButton("Đóng", null);
+                    if ("doctor".equals(role)) {
+                        dialog.setPositiveButton("Chỉnh sửa", (d, which) -> {
+                            Intent intent = new Intent(this, RecordEditorActivity.class);
+                            intent.putExtra("appointmentId", document.getId());
+                            startActivity(intent);
+                        });
+                    }
+                    dialog.show();
+                }).addOnFailureListener(error -> App.error(this, error));
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (listener != null) listener.remove();
+        super.onDestroy();
     }
 }

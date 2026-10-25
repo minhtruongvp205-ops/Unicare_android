@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -69,7 +71,12 @@ public class HealthVitalsActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
 
         FloatingActionButton fab = findViewById(R.id.fabAdd);
-        fab.setOnClickListener(v -> showAddDialog());
+        if (doctorMode) {
+            fab.setVisibility(View.VISIBLE);
+            fab.setOnClickListener(v -> showAddDialog());
+        } else {
+            fab.setVisibility(View.GONE);
+        }
 
         loadVitals();
     }
@@ -110,40 +117,65 @@ public class HealthVitalsActivity extends AppCompatActivity {
         txtGlucose.setText(latest.getOrDefault("glucose", "--"));
     }
 
+    // Material 3 dialog: khi validateData() sai, hộp thoại không tự đóng.
     private void showAddDialog() {
-        View v = LayoutInflater.from(this).inflate(R.layout.dialog_add_vital, null);
-        Spinner spinner = v.findViewById(R.id.spinnerType);
-        EditText edtValue = v.findViewById(R.id.edtValue);
-        EditText edtNote = v.findViewById(R.id.edtNote);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_vital, null);
+        Spinner spinner = view.findViewById(R.id.spinnerType);
+        EditText edtValue = view.findViewById(R.id.edtValue);
+        EditText edtNote = view.findViewById(R.id.edtNote);
+        TextInputLayout tilValue = view.findViewById(R.id.tilValue);
 
-        ArrayAdapter<String> a = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, TYPES);
-        a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(a);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, TYPES);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(arrayAdapter);
 
-        new AlertDialog.Builder(this)
-                .setTitle("Thêm chỉ số sức khoẻ")
-                .setView(v)
-                .setPositiveButton("Lưu", (d, w) -> {
-                    String val = edtValue.getText().toString().trim();
-                    String note = edtNote.getText().toString().trim();
-                    if (val.isEmpty()) { App.note(this, "Nhập giá trị"); return; }
-                    int pos = spinner.getSelectedItemPosition();
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("type", TYPE_KEYS[pos]);
-                    data.put("label", TYPES[pos]);
-                    data.put("value", val);
-                    data.put("icon", ICONS[pos]);
-                    data.put("note", note);
-                    data.put("recordedAt", FieldValue.serverTimestamp());
-                    data.put("createdBy", App.uid());
-                    if (doctorMode) data.put("appointmentId", appointmentId);
-                    App.db().collection("health_vitals").document(patientId)
-                            .collection("records").add(data)
-                            .addOnSuccessListener(ref -> App.note(this, "Đã lưu chỉ số"))
-                            .addOnFailureListener(e -> App.error(this, e));
-                })
+        androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(this)
+                .setTitle("Thêm chỉ số sức khỏe")
+                .setView(view)
+                .setPositiveButton("Lưu", null)
                 .setNegativeButton("Hủy", null)
-                .show();
+                .create();
+        dialog.setOnShowListener(ignored -> dialog.getButton(
+                android.content.DialogInterface.BUTTON_POSITIVE).setOnClickListener(button -> {
+            if (!validateData(edtValue, tilValue)) return;
+            int position = spinner.getSelectedItemPosition();
+            Map<String, Object> data = new HashMap<>();
+            data.put("type", TYPE_KEYS[position]);
+            data.put("label", TYPES[position]);
+            data.put("value", App.value(edtValue).replace(',', '.'));
+            data.put("icon", ICONS[position]);
+            data.put("note", App.value(edtNote));
+            data.put("recordedAt", FieldValue.serverTimestamp());
+            data.put("createdBy", App.uid());
+            if (doctorMode) data.put("appointmentId", appointmentId);
+            App.db().collection("health_vitals").document(patientId)
+                    .collection("records").add(data)
+                    .addOnSuccessListener(ref -> App.note(this, "Đã lưu chỉ số"))
+                    .addOnFailureListener(error -> App.error(this, error));
+            dialog.dismiss();
+        }));
+        dialog.show();
+    }
+
+    private boolean validateData(EditText edtValue, TextInputLayout tilValue) {
+        tilValue.setError(null);
+        String text = App.value(edtValue).replace(',', '.');
+        if (text.isEmpty()) {
+            tilValue.setError("Vui lòng nhập chỉ số sức khỏe");
+            return false;
+        }
+        try {
+            double value = Double.parseDouble(text);
+            if (Double.isNaN(value) || Double.isInfinite(value) || value <= 0) {
+                tilValue.setError("Giá trị phải là số lớn hơn 0");
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            tilValue.setError("Vui lòng nhập số hợp lệ");
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -209,9 +241,9 @@ public class HealthVitalsActivity extends AppCompatActivity {
                 h.status.setBackgroundResource(R.drawable.bg_badge_green);
             }
 
-            // Xóa chỉ số
-            if (h.del != null) h.del.setVisibility(doctorMode ? View.GONE : View.VISIBLE);
-            if (h.del != null && !doctorMode) {
+            // Xóa chỉ số (Chỉ bác sĩ mới được xóa)
+            if (h.del != null) h.del.setVisibility(doctorMode ? View.VISIBLE : View.GONE);
+            if (h.del != null && doctorMode) {
                 h.del.setOnClickListener(v -> new AlertDialog.Builder(HealthVitalsActivity.this)
                         .setTitle("🗑️ Xóa chỉ số")
                         .setMessage("Xóa bản ghi " + (label != null ? label : "này") + "?")

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F8FE"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:background="#FFFFFF">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Chi tiết dịch vụ"
+            android:textColor="#0D6EFD"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <View android:layout_width="24dp" android:layout_height="24dp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+        <TextView
+            android:id="@+id/tvContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#1A1A2E"
+            android:textSize="15sp"
+            android:lineSpacingExtra="6dp"
+            android:text="Bệnh viện Đại học Y Dược TP. Hồ Chí Minh đã triển khai phòng khám Thần kinh chuyên sâu như sau\n\n1. Thông tin chung\nNgười bệnh có thể Đăng ký khám bệnh qua các phương thức sau:\n- Qua ứng dụng UMC Care của bệnh viện.\n\n2. Thời gian khám bệnh\nTừ thứ Hai đến thứ Sáu.\nSáng: 07h00 - 11h30\nChiều: 13h00 - 16h30\n\n3. Đối tượng phục vụ\nNgười bệnh cần khám đánh giá và điều trị các lĩnh vực chuyên sâu trong thần kinh bởi các bác sĩ là chuyên gia trong từng lĩnh vực.\n\n4. Chi phí khám\nKhám Thần kinh chuyên sâu: 300.000đ/lượt.\nKhám Tư vấn tâm lý: 500.000đ/lượt.\n\n5. Lịch khám\n- Đột quỵ\n- Trí nhớ và sa sút trí tuệ\n- Tâm lý lâm sàng"/>
+    </ScrollView>
+</LinearLayout>

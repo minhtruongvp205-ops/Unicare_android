@@ -48,5 +48,15 @@
         <activity android:name=".DoctorScheduleActivity" android:exported="false"
             android:screenOrientation="portrait"/>
 
+        <!-- ===== NEW UI FEATURES ===== -->
+        <activity android:name=".UserGuideActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ContactActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ServicesActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ServiceDetailActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+
     </application>
 </manifest>

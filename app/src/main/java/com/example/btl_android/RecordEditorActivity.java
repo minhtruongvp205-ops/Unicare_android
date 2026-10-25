@@ -1,8 +1,9 @@
 package com.example.btl_android;
 
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.firestore.DocumentReference;
@@ -18,14 +19,19 @@ public class RecordEditorActivity extends AppCompatActivity {
     private String appointmentId;
     private DocumentSnapshot appointment;
     private boolean hasRecord=false,hasPlan=false;
-    private EditText diagnosis,prescription,notes,medicine,method,times,purpose,guide;
-    private Button save;
+    private TextInputEditText diagnosis,prescription,notes,medicine,method,times,purpose,guide;
+    private TextInputLayout tilDiagnosis,tilMedicine,tilMethod,tilTimes;
+    private MaterialButton save;
     private TextView message;
     @Override protected void onCreate(Bundle b){
         super.onCreate(b); App.requireLogin(this); if(App.user()==null)return;
         setContentView(R.layout.activity_record_editor); App.applyInsets(this);
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         appointmentId=getIntent().getStringExtra("appointmentId");
+        tilDiagnosis=findViewById(R.id.tilDiagnosis);
+        tilMedicine=findViewById(R.id.tilMedicine);
+        tilMethod=findViewById(R.id.tilMethod);
+        tilTimes=findViewById(R.id.tilTimes);
         diagnosis=findViewById(R.id.edtDiagnosis); prescription=findViewById(R.id.edtPrescription);
         notes=findViewById(R.id.edtNotes);medicine=findViewById(R.id.edtMedicine);
         method=findViewById(R.id.edtMethod);times=findViewById(R.id.edtTimes);
@@ -66,16 +72,40 @@ public class RecordEditorActivity extends AppCompatActivity {
                             }).addOnFailureListener(e->message.setText("Lỗi đọc bệnh án: "+e.getLocalizedMessage()));
                 }).addOnFailureListener(e->message.setText("Lỗi đọc lịch khám: "+e.getLocalizedMessage()));
     }
-    private void save(){
-        if(appointment==null)return;
-        if(App.value(diagnosis).length()<3){diagnosis.setError("Chẩn đoán quá ngắn");return;}
-        if(App.value(medicine).isEmpty() || App.value(method).isEmpty() || App.value(times).isEmpty()){
-            App.note(this,"Nhập tên thuốc, cách dùng, số lần/ngày");return;
+    private boolean validateData() {
+        boolean isValid = true;
+        tilDiagnosis.setError(null);
+        tilMedicine.setError(null);
+        tilMethod.setError(null);
+        tilTimes.setError(null);
+        if (App.value(diagnosis).length() < 3) {
+            tilDiagnosis.setError("Chẩn đoán cần ít nhất 3 ký tự");
+            isValid = false;
         }
-        int count;
-        try { count=Integer.parseInt(App.value(times)); }
-        catch(NumberFormatException e){times.setError("Số lần không hợp lệ");return;}
-        if(count<1||count>12){times.setError("Số lần phải từ 1 đến 12");return;}
+        if (App.value(medicine).isEmpty()) {
+            tilMedicine.setError("Vui lòng nhập tên thuốc");
+            isValid = false;
+        }
+        if (App.value(method).isEmpty()) {
+            tilMethod.setError("Vui lòng nhập cách dùng thuốc");
+            isValid = false;
+        }
+        try {
+            int count = Integer.parseInt(App.value(times));
+            if (count < 1 || count > 12) {
+                tilTimes.setError("Số lần/ngày phải từ 1 đến 12");
+                isValid = false;
+            }
+        } catch (NumberFormatException e) {
+            tilTimes.setError("Vui lòng nhập số lần/ngày hợp lệ");
+            isValid = false;
+        }
+        return isValid;
+    }
+
+    private void save(){
+        if (appointment == null || !validateData()) return;
+        int count = Integer.parseInt(App.value(times));
         save.setEnabled(false);message.setText("Đang lưu dữ liệu...");
         DocumentReference record=App.db().collection("medical_records").document(appointmentId);
         DocumentReference plan=App.db().collection("treatment_plans").document(appointmentId);
