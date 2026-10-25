@@ -33,6 +33,8 @@ public class ProfileActivity extends AppCompatActivity {
         name=findViewById(R.id.edtName);phone=findViewById(R.id.edtPhone); dob=findViewById(R.id.edtDob);
         gender=findViewById(R.id.edtGender);address=findViewById(R.id.edtAddress);
         history=findViewById(R.id.edtMedicalHistory);save=findViewById(R.id.btnSaveProfile);
+        MaterialButton logout=findViewById(R.id.btnLogout);
+        logout.setOnClickListener(v -> App.logout(this));
         message=findViewById(R.id.txtMessage);
         save.setEnabled(false);
         ((TextView)findViewById(R.id.txtEmail)).setText("Email: "+App.user().getEmail());

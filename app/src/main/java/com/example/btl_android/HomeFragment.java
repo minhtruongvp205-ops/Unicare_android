@@ -55,8 +55,8 @@ public class HomeFragment extends Fragment {
                 () -> startActivity(new Intent(getContext(), BookingActivity.class))));
         features.add(new Feature("Lịch sử đặt khám", R.drawable.ic_calendar,
                 () -> startActivity(new Intent(getContext(), AppointmentsActivity.class))));
-        features.add(new Feature("Thanh toán", R.drawable.ic_medical_record, this::showComingSoon));
-        features.add(new Feature("Hoá đơn", R.drawable.ic_medical_record, this::showComingSoon));
+        features.add(new Feature("Thanh toán", R.drawable.ic_medical_record, () -> startActivity(new Intent(getContext(), PaymentActivity.class).putExtra("prescId", "examplePrescId"))));
+        features.add(new Feature("Hoá đơn", R.drawable.ic_medical_record, () -> startActivity(new Intent(getContext(), InvoiceActivity.class))));
 
         // Hàng 2
         features.add(new Feature("Hồ sơ sức khoẻ", R.drawable.ic_medical_record,

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary colors -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:textColorPrimary">@color/colorTextPrimary</item>
+        <item name="android:textColorSecondary">@color/colorTextSecondary</item>
+        <!-- Font family -->
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="fontFamily">@font/inter_regular</item>
+        <!-- Card style -->
+        <item name="cardViewStyle">@style/Widget.UniCare.MaterialCard</item>
+    </style>
+
+    <!-- Material card used throughout the app -->
+    <style name="Widget.UniCare.MaterialCard" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/colorCardBackground</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">4dp</item>
+    </style>
+</resources>

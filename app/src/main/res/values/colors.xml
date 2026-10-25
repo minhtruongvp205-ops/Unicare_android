@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary pastel colors -->
+    <color name="colorPrimary">#E3F2FD</color> <!-- light blue -->
+    <color name="colorPrimaryVariant">#BBDEFB</color>
+    <color name="colorAccent">#0D6EFD</color>
+    <color name="colorBackground">#F5F8FE</color>
+    <color name="colorCardBackground">#FFFFFF</color>
+    <color name="colorTextPrimary">#1A1A2E</color>
+    <color name="colorTextSecondary">#9CA3AF</color>
+</resources>

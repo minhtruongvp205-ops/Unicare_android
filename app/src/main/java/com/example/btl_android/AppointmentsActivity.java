@@ -39,17 +39,18 @@ public class AppointmentsActivity extends AppCompatActivity {
 
     // Filter tab IDs and labels
     private static final int[] TAB_IDS = {
-        R.id.tabAll, R.id.tabPending, R.id.tabConfirmed, R.id.tabCompleted, R.id.tabCancelled
+            R.id.tabAll, R.id.tabPending, R.id.tabConfirmed, R.id.tabCompleted, R.id.tabCancelled
     };
     private static final String[] TAB_FILTERS = {
-        "ALL", "PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"
+            "ALL", "PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"
     };
 
     @Override
     protected void onCreate(Bundle b) {
         super.onCreate(b);
         App.requireLogin(this);
-        if (App.user() == null) return;
+        if (App.user() == null)
+            return;
         setContentView(R.layout.activity_appointments);
         App.applyInsets(this);
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
@@ -101,16 +102,25 @@ public class AppointmentsActivity extends AppCompatActivity {
 
         App.db().collection("users").document(App.uid()).get().addOnSuccessListener(profile -> {
             role = App.str(profile, "role");
-            if (!role.equals("doctor") && !role.equals("patient")) { App.logout(this); return; }
+            if (!role.equals("doctor") && !role.equals("patient")) {
+                App.logout(this);
+                return;
+            }
             String filter = role.equals("doctor") ? "doctorId" : "patientId";
             subscription = App.db().collection("appointments").whereEqualTo(filter, App.uid())
                     .addSnapshotListener((snapshot, e) -> {
-                        if (e != null) { empty.setText("Lỗi tải lịch: " + e.getLocalizedMessage()); return; }
+                        if (e != null) {
+                            empty.setText("Lỗi tải lịch: " + e.getLocalizedMessage());
+                            return;
+                        }
                         allAppointments.clear();
-                        if (snapshot != null) for (QueryDocumentSnapshot d : snapshot) allAppointments.add(d);
+                        if (snapshot != null)
+                            for (QueryDocumentSnapshot d : snapshot)
+                                allAppointments.add(d);
                         Collections.sort(allAppointments, (a, c) -> {
                             Timestamp at = a.getTimestamp("startAt"), ct = c.getTimestamp("startAt");
-                            if (at == null || ct == null) return 0;
+                            if (at == null || ct == null)
+                                return 0;
                             return ct.compareTo(at);
                         });
                         applyFilter();
@@ -121,7 +131,8 @@ public class AppointmentsActivity extends AppCompatActivity {
     private void updateTabHighlight() {
         for (int i = 0; i < TAB_IDS.length; i++) {
             TextView tab = findViewById(TAB_IDS[i]);
-            if (tab == null) continue;
+            if (tab == null)
+                continue;
             if (TAB_FILTERS[i].equals(currentFilter)) {
                 tab.setTextColor(0xFFFFFFFF);
                 tab.setBackgroundResource(R.drawable.bg_icon_circle_blue);
@@ -142,15 +153,18 @@ public class AppointmentsActivity extends AppCompatActivity {
 
         for (DocumentSnapshot d : allAppointments) {
             String st = d.getString("status");
-            if (st == null) st = "";
+            if (st == null)
+                st = "";
 
             // Filter by status tab
-            if (!"ALL".equals(currentFilter) && !currentFilter.equals(st)) continue;
+            if (!"ALL".equals(currentFilter) && !currentFilter.equals(st))
+                continue;
 
             // If filterToday: only show appointments for today
             if (filterToday) {
                 Timestamp ts = d.getTimestamp("startAt");
-                if (ts == null || ts.toDate().before(startOfDay.getTime())) continue;
+                if (ts == null || ts.toDate().before(startOfDay.getTime()))
+                    continue;
             }
 
             filtered.add(d);
@@ -166,7 +180,11 @@ public class AppointmentsActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() { if (subscription != null) subscription.remove(); super.onDestroy(); }
+    protected void onDestroy() {
+        if (subscription != null)
+            subscription.remove();
+        super.onDestroy();
+    }
 
     private void changeStatus(DocumentSnapshot d, String next) {
         DocumentReference ref = d.getReference();
@@ -183,31 +201,43 @@ public class AppointmentsActivity extends AppCompatActivity {
                     .addOnFailureListener(e -> App.error(this, e));
             return;
         }
-        if (!next.equals("CANCELLED") || (!current.equals("PENDING") && !current.equals("CONFIRMED"))) return;
+        if (!next.equals("CANCELLED") || (!current.equals("PENDING") && !current.equals("CONFIRMED")))
+            return;
         WriteBatch batch = App.db().batch();
         batch.update(ref, "status", "CANCELLED", "updatedAt", FieldValue.serverTimestamp());
         String slotId = App.str(d, "slotId");
-        if (!slotId.isEmpty()) batch.delete(App.db().collection("slots").document(slotId));
+        if (!slotId.isEmpty())
+            batch.delete(App.db().collection("slots").document(slotId));
         batch.commit().addOnFailureListener(e -> App.error(this, e));
     }
 
     private String status(String s) {
         switch (s) {
-            case "PENDING":   return "⏳ Chờ xác nhận";
-            case "CONFIRMED": return "✅ Đã xác nhận";
-            case "CANCELLED": return "❌ Đã hủy";
-            case "COMPLETED": return "🏥 Đã khám";
-            default: return s;
+            case "PENDING":
+                return "⏳ Chờ xác nhận";
+            case "CONFIRMED":
+                return "✅ Đã xác nhận";
+            case "CANCELLED":
+                return "❌ Đã hủy";
+            case "COMPLETED":
+                return "🏥 Đã khám";
+            default:
+                return s;
         }
     }
 
     private int statusColor(String s) {
         switch (s) {
-            case "PENDING":   return 0xFFF59E0B;
-            case "CONFIRMED": return 0xFF10B981;
-            case "CANCELLED": return 0xFFEF4444;
-            case "COMPLETED": return 0xFF0D6EFD;
-            default: return 0xFF6B7280;
+            case "PENDING":
+                return 0xFFF59E0B;
+            case "CONFIRMED":
+                return 0xFF10B981;
+            case "CANCELLED":
+                return 0xFFEF4444;
+            case "COMPLETED":
+                return 0xFF0D6EFD;
+            default:
+                return 0xFF6B7280;
         }
     }
 
@@ -215,6 +245,7 @@ public class AppointmentsActivity extends AppCompatActivity {
         class Holder extends RecyclerView.ViewHolder {
             TextView title, info, statusTv;
             Button primary, secondary;
+
             Holder(View v) {
                 super(v);
                 title = v.findViewById(R.id.txtTitle);
@@ -225,19 +256,25 @@ public class AppointmentsActivity extends AppCompatActivity {
             }
         }
 
-        @NonNull @Override
+        @NonNull
+        @Override
         public Holder onCreateViewHolder(@NonNull ViewGroup p, int t) {
             return new Holder(LayoutInflater.from(p.getContext()).inflate(R.layout.item_appointment, p, false));
         }
 
-        @Override public int getItemCount() { return filtered.size(); }
+        @Override
+        public int getItemCount() {
+            return filtered.size();
+        }
 
         @Override
         public void onBindViewHolder(@NonNull Holder h, int p) {
             DocumentSnapshot d = filtered.get(p);
             String st = App.str(d, "status");
-            h.title.setText(role.equals("doctor") ? "🧑‍⚕️  " + App.str(d, "patientName") : "👨‍⚕️  BS. " + App.str(d, "doctorName"));
-            h.info.setText("🏥  " + App.str(d, "specialty") + "\n📅  " + App.date(d.getTimestamp("startAt")) + "\n📝  " + App.str(d, "reason"));
+            h.title.setText(role.equals("doctor") ? "🧑‍⚕️  " + App.str(d, "patientName")
+                    : "👨‍⚕️  BS. " + App.str(d, "doctorName"));
+            h.info.setText("🏥  " + App.str(d, "specialty") + "\n📅  " + App.date(d.getTimestamp("startAt")) + "\n📝  "
+                    + App.str(d, "reason"));
             h.statusTv.setText(status(st));
             h.statusTv.setTextColor(statusColor(st));
             h.primary.setVisibility(View.GONE);
@@ -245,7 +282,8 @@ public class AppointmentsActivity extends AppCompatActivity {
             h.primary.setOnClickListener(null);
             h.secondary.setOnClickListener(null);
 
-            if (notices) return;
+            if (notices)
+                return;
 
             if (role.equals("doctor")) {
                 if (st.equals("PENDING")) {
@@ -292,7 +330,8 @@ public class AppointmentsActivity extends AppCompatActivity {
                 if (st.equals("COMPLETED")) {
                     h.primary.setVisibility(View.VISIBLE);
                     h.primary.setText("📄 Xem bệnh án");
-                    h.primary.setOnClickListener(v -> startActivity(new Intent(AppointmentsActivity.this, RecordsActivity.class)));
+                    h.primary.setOnClickListener(
+                            v -> startActivity(new Intent(AppointmentsActivity.this, RecordsActivity.class)));
                     Boolean rated = d.getBoolean("rated");
                     if (!Boolean.TRUE.equals(rated)) {
                         h.secondary.setVisibility(View.VISIBLE);
