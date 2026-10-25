@@ -55,21 +55,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tổng đài hỗ trợ"
+                    android:text="Trung tâm hỗ trợ"
                     android:textColor="#E0E7FF"
                     android:textSize="12sp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="1900 2827"
+                    android:text="Liên hệ UniCare"
                     android:textColor="#FFFFFF"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </LinearLayout>
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSupportContact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="GỌI NGAY"
+                android:text="LIÊN HỆ"
                 app:cornerRadius="8dp"
                 android:backgroundTint="#F59E0B"
                 android:textColor="#FFFFFF" />
@@ -87,6 +88,9 @@
             android:layout_weight="1"
             android:gravity="center"
             android:paddingVertical="12dp"
+            android:id="@+id/tabGuides"
+            android:clickable="true"
+            android:focusable="true"
             android:text="Quy trình"
             android:textColor="#0D6EFD"
             android:textStyle="bold"
@@ -98,6 +102,10 @@
             android:layout_weight="1"
             android:gravity="center"
             android:paddingVertical="12dp"
+            android:id="@+id/tabFaq"
+            android:clickable="true"
+            android:focusable="true"
+            android:layout_marginEnd="16dp"
             android:text="Câu hỏi thường gặp"
             android:textColor="#6B7280" />
     </LinearLayout>
@@ -105,7 +113,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvGuides"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="8dp"
         android:paddingHorizontal="16dp"
         android:clipToPadding="false"/>

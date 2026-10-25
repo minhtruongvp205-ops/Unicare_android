@@ -109,7 +109,8 @@ public class HomeFragment extends Fragment {
                 () -> startActivity(new Intent(getContext(), UserGuideActivity.class))));
         features.add(new Feature("Dịch vụ\nnổi bật", R.drawable.ic_medical_record,
                 () -> startActivity(new Intent(getContext(), ServicesActivity.class))));
-        features.add(new Feature("Bảng giá\ndịch vụ", R.drawable.ic_medical_record, this::showComingSoon));
+        features.add(new Feature("Bảng giá\ndịch vụ", R.drawable.ic_medical_record,
+                () -> startActivity(new Intent(getContext(), PriceListActivity.class))));
         features.add(new Feature("Liên hệ", R.drawable.ic_schedule,
                 () -> startActivity(new Intent(getContext(), ContactActivity.class))));
         features.add(new Feature("Đăng xuất", R.drawable.ic_person, () -> {

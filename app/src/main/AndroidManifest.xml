@@ -49,6 +49,10 @@
             android:screenOrientation="portrait"/>
 
         <!-- ===== NEW UI FEATURES ===== -->
+        <activity android:name=".HelpDetailActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".PriceListActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
         <activity android:name=".UserGuideActivity" android:exported="false"
             android:screenOrientation="portrait"/>
         <activity android:name=".ContactActivity" android:exported="false"
