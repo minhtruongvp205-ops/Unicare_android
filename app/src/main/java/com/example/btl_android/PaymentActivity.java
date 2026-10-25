@@ -107,15 +107,14 @@ public class PaymentActivity extends AppCompatActivity {
         }
         int checkedId = rgPaymentMethod.getCheckedRadioButtonId();
         String method;
-        switch (checkedId) {
-            case R.id.rbCash:
-                method = "CASH"; break;
-            case R.id.rbCard:
-                method = "CARD"; break;
-            case R.id.rbWallet:
-                method = "E_WALLET"; break;
-            default:
-                method = "CASH"; break;
+        if (checkedId == R.id.rbCash) {
+            method = "CASH";
+        } else if (checkedId == R.id.rbCard) {
+            method = "CARD";
+        } else if (checkedId == R.id.rbWallet) {
+            method = "E_WALLET";
+        } else {
+            method = "CASH";
         }
         Order order = new Order();
         order.id = db.collection("orders").document().getId();

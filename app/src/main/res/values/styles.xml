@@ -10,8 +10,8 @@
         <item name="android:textColorPrimary">@color/colorTextPrimary</item>
         <item name="android:textColorSecondary">@color/colorTextSecondary</item>
         <!-- Font family -->
-        <item name="android:fontFamily">@font/inter_regular</item>
-        <item name="fontFamily">@font/inter_regular</item>
+        <!-- <item name="android:fontFamily">@font/inter_regular</item> -->
+        <!-- <item name="fontFamily">@font/inter_regular</item> -->
         <!-- Card style -->
         <item name="cardViewStyle">@style/Widget.UniCare.MaterialCard</item>
     </style>

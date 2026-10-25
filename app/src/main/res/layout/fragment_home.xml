@@ -121,6 +121,7 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvViewAllNews"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Xem thêm"

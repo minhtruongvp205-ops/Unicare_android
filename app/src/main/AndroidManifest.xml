@@ -57,6 +57,12 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".ServiceDetailActivity" android:exported="false"
             android:screenOrientation="portrait"/>
+        <activity android:name=".InvoiceActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".PaymentActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".NewsActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
 
     </application>
 </manifest>

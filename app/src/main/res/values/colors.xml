@@ -8,4 +8,5 @@
     <color name="colorCardBackground">#FFFFFF</color>
     <color name="colorTextPrimary">#1A1A2E</color>
     <color name="colorTextSecondary">#9CA3AF</color>
+    <color name="red_500">#F44336</color>
 </resources>

@@ -9,12 +9,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class HomeFragment extends Fragment {
 
         setupMainFeatures(view);
         setupNews(view);
-        // setupOtherFeatures(view); // removed per user request
+        setupOtherFeatures(view);
 
         return view;
     }
@@ -61,32 +63,41 @@ public class HomeFragment extends Fragment {
         // Hàng 2
         features.add(new Feature("Hồ sơ sức khoẻ", R.drawable.ic_medical_record,
                 () -> startActivity(new Intent(getContext(), HealthVitalsActivity.class))));
-        features.add(new Feature("Kết quả CLS", R.drawable.ic_search, this::showComingSoon));
-        features.add(new Feature("Lịch hẹn NT", R.drawable.ic_schedule, this::showComingSoon));
-        features.add(new Feature("Lắng nghe KH", R.drawable.ic_notification, this::showComingSoon));
-
-        // Hàng 3
         features.add(new Feature("Hướng dẫn", R.drawable.ic_search,
                 () -> startActivity(new Intent(getContext(), UserGuideActivity.class))));
         features.add(new Feature("Theo dõi tại nhà", R.drawable.ic_medical_record,
-                () -> startActivity(new Intent(getContext(), MedicationActivity.class)))); // Sử dụng nhắc nhở thuốc cho
-                                                                                           // Theo dõi tại nhà
-        features.add(new Feature("Tiêm chủng", R.drawable.ic_schedule, this::showComingSoon));
+                () -> startActivity(new Intent(getContext(), MedicationActivity.class)))); // Sử dụng nhắc nhở thuốc cho Theo dõi tại nhà
         features.add(new Feature("Hỏi đáp (Chat)", R.drawable.ic_person, this::showComingSoon));
 
         rv.setAdapter(new FeatureAdapter(features));
+    }
+
+    private static class NewsItem {
+        String title;
+        String url;
+        NewsItem(String t, String u) {
+            title = t;
+            url = u;
+        }
     }
 
     private void setupNews(View view) {
         RecyclerView rv = view.findViewById(R.id.rvNews);
         rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
-        List<String> news = new ArrayList<>();
-        news.add("Chương trình sinh hoạt nhóm người bệnh Ung thư dạ dày: Niềm tin...");
-        news.add("Thông báo nghỉ lễ Ngày Thống nhất Đất nước 30/4 & Ngày Quốc tế LĐ...");
-        news.add("Tầm soát ung thư sớm: Lợi ích và những điều cần biết");
+        List<NewsItem> news = new ArrayList<>();
+        news.add(new NewsItem("Các bệnh về tim mạch: Nguyên nhân, dấu hiệu...", "https://timbenhvien.vn/cam-nang/cac-benh-ve-tim-nguyen-nhan-dau-hieu-nhan-biet-va-huong-dieu-tri/"));
+        news.add(new NewsItem("Các bệnh lý về gan thường gặp", "https://benhviendongnai.com.vn/cac-benh-ly-ve-gan-thuong-gap/"));
+        news.add(new NewsItem("Ung thư cổ tử cung: Nguyên nhân, dấu hiệu...", "https://vinuni.edu.vn/vi/ung-thu-co-tu-cung-nguyen-nhan-dau-hieu-va-phuong-phap-dieu-tri/"));
 
         rv.setAdapter(new NewsAdapter(news));
+        
+        TextView tvViewAllNews = view.findViewById(R.id.tvViewAllNews);
+        if (tvViewAllNews != null) {
+            tvViewAllNews.setOnClickListener(v -> {
+                startActivity(new Intent(getContext(), NewsActivity.class));
+            });
+        }
     }
 
     private void setupOtherFeatures(View view) {
@@ -99,10 +110,15 @@ public class HomeFragment extends Fragment {
         features.add(new Feature("Dịch vụ\nnổi bật", R.drawable.ic_medical_record,
                 () -> startActivity(new Intent(getContext(), ServicesActivity.class))));
         features.add(new Feature("Bảng giá\ndịch vụ", R.drawable.ic_medical_record, this::showComingSoon));
-        features.add(new Feature("Thư viện\nsức khoẻ", R.drawable.ic_medical_record, this::showComingSoon));
-        features.add(new Feature("Tin tức -\nSự kiện", R.drawable.ic_notification, this::showComingSoon));
         features.add(new Feature("Liên hệ", R.drawable.ic_schedule,
                 () -> startActivity(new Intent(getContext(), ContactActivity.class))));
+        features.add(new Feature("Đăng xuất", R.drawable.ic_person, () -> {
+            FirebaseAuth.getInstance().signOut();
+            Toast.makeText(getContext(), "Đăng xuất thành công", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getContext(), AuthActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        }));
 
         rv.setAdapter(new FeatureAdapter(features));
     }
@@ -156,9 +172,9 @@ public class HomeFragment extends Fragment {
     }
 
     private class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.Holder> {
-        List<String> list;
+        List<NewsItem> list;
 
-        NewsAdapter(List<String> list) {
+        NewsAdapter(List<NewsItem> list) {
             this.list = list;
         }
 
@@ -179,8 +195,12 @@ public class HomeFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull Holder h, int pos) {
-            h.title.setText(list.get(pos));
-            h.itemView.setOnClickListener(v -> showComingSoon());
+            NewsItem item = list.get(pos);
+            h.title.setText(item.title);
+            h.itemView.setOnClickListener(v -> {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(item.url));
+                v.getContext().startActivity(i);
+            });
         }
 
         @Override
