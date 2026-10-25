@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="450dp"
+    android:fillViewport="false">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nhập các chỉ số đã đo rồi lưu một lần. Nếu nhập sai, mở lại để sửa; ô chưa đo có thể để trống."
+            android:textSize="13sp"
+            android:textColor="#4B5563"
+            android:layout_marginBottom="12dp"/>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilAllHeartRate"
+            style="@style/Widget.UniCare.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="9dp"
+            android:hint="Nhịp tim (bpm)">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtAllHeartRate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilAllSystolic"
+            style="@style/Widget.UniCare.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="9dp"
+            android:hint="Huyết áp tâm thu (mmHg)">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtAllSystolic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilAllDiastolic"
+            style="@style/Widget.UniCare.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="9dp"
+            android:hint="Huyết áp tâm trương (mmHg)">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtAllDiastolic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilAllWeight"
+            style="@style/Widget.UniCare.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="9dp"
+            android:hint="Cân nặng (kg)">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtAllWeight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilAllGlucose"
+            style="@style/Widget.UniCare.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="9dp"
+            android:hint="Đường huyết (mg/dL)">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtAllGlucose"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilAllTemperature"
+            style="@style/Widget.UniCare.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="9dp"
+            android:hint="Nhiệt độ (°C)">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtAllTemperature"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilAllSpo2"
+            style="@style/Widget.UniCare.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="9dp"
+            android:hint="SpO₂ (%)">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtAllSpo2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.UniCare.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ghi chú (không bắt buộc)">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtAllVitalNote"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:minLines="2" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/txtAllVitalError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="#C62828"
+            android:textSize="12sp" />
+    </LinearLayout>
+</ScrollView>

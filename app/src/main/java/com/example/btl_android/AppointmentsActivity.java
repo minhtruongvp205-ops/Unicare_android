@@ -300,20 +300,14 @@ public class AppointmentsActivity extends AppCompatActivity {
                             .setPositiveButton("Từ chối", (dg, w) -> changeStatus(d, "CANCELLED"))
                             .setNegativeButton("Không", null).show());
                 } else if (st.equals("CONFIRMED")) {
-                    // Nhập bệnh án
+                    // Lưu bệnh án + đơn thuốc + kết thúc cuộc khám trong MỘT màn hình.
                     h.primary.setVisibility(View.VISIBLE);
-                    h.primary.setText("📋 Nhập bệnh án");
+                    h.primary.setText("🩺 Bắt đầu khám");
                     h.primary.setOnClickListener(v -> openRecord(d));
-                    // Đánh dấu hoàn thành
-                    h.secondary.setVisibility(View.VISIBLE);
-                    h.secondary.setText("🏥 Hoàn thành");
-                    h.secondary.setOnClickListener(v -> new android.app.AlertDialog.Builder(AppointmentsActivity.this)
-                            .setMessage("Đánh dấu lịch khám đã hoàn thành?")
-                            .setPositiveButton("Hoàn thành", (dg, w) -> changeStatus(d, "COMPLETED"))
-                            .setNegativeButton("Hủy", null).show());
+                    // Không cho đánh dấu hoàn thành trước khi nhập kết quả khám.
                 } else if (st.equals("COMPLETED")) {
                     h.primary.setVisibility(View.VISIBLE);
-                    h.primary.setText("📋 Sửa bệnh án");
+                    h.primary.setText("📋 Xem / sửa phiếu khám");
                     h.primary.setOnClickListener(v -> openRecord(d));
                 }
             } else {

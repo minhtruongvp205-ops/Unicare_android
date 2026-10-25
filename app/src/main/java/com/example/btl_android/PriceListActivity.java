@@ -102,9 +102,8 @@ public class PriceListActivity extends AppCompatActivity {
             holder.amount.setText(money(item.amount));
             holder.itemView.setOnClickListener(v -> new AlertDialog.Builder(PriceListActivity.this)
                     .setTitle(item.name)
-                    .setMessage("Giá công bố: " + money(item.amount) + "\n\n" + item.notes
-                            + "\n\nĐây là giá tham khảo tại Bệnh viện Đại học Y Hà Nội theo Quyết định 2375/QĐ-BYT ngày 28/07/2026, không phải giá dịch vụ do UniCare thu.")
-                    .setPositiveButton("Đã hiểu", null)
+                    .setMessage("Giá dịch vụ: " + money(item.amount) + "\n\n" + item.notes)
+                    .setPositiveButton("Đóng", null)
                     .show());
         }
 

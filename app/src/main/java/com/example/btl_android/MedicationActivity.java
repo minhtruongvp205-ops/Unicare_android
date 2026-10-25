@@ -37,6 +37,8 @@ public class MedicationActivity extends AppCompatActivity {
         String name, dosage, timeLabel, timeKey, frequency;
         boolean fromDoctor;
         String doctorName;
+        final List<String> timeKeys = new ArrayList<>();
+        String priceLabel = "";
 
         MedItem(DocumentSnapshot d) {
             this.doc = d;
@@ -56,6 +58,32 @@ public class MedicationActivity extends AppCompatActivity {
             this.frequency = frequency;
             this.fromDoctor = true;
             this.doctorName = doctorName;
+        }
+
+        /** Thuốc trong đơn kê nhiều dòng của bác sĩ. */
+        MedItem(Map<String, Object> item, String doctorName, boolean demoPrice) {
+            this.doc = null;
+            this.fromDoctor = true;
+            this.doctorName = doctorName;
+            this.name = nvl(item.get("name") == null ? null : item.get("name").toString());
+            String dose = nvl(item.get("dose") == null ? null : item.get("dose").toString());
+            String instr = nvl(item.get("instruction") == null ? null : item.get("instruction").toString());
+            this.dosage = "Liều: " + dose + (instr.isEmpty() ? "" : " • " + instr);
+            this.timeLabel = nvl(item.get("schedule") == null ? null : item.get("schedule").toString());
+            this.timeKey = "";
+            Number days = item.get("days") instanceof Number ? (Number)item.get("days") : null;
+            this.frequency = (days == null ? "" : days.intValue() + " ngày")
+                    + " • " + nvl(item.get("quantity") == null ? null : item.get("quantity").toString())
+                    + " " + nvl(item.get("unit") == null ? null : item.get("unit").toString());
+            Object keys = item.get("timeKeys");
+            if (keys instanceof List) {
+                for (Object key : (List<?>)keys) if (key instanceof String) timeKeys.add((String)key);
+            }
+            Object total = item.get("lineTotalVnd");
+            if (total instanceof Number) {
+                priceLabel = " • " + PriceText.vnd(((Number)total).longValue())
+                        + (demoPrice ? " (giá demo)" : "");
+            }
         }
 
         static String nvl(String s) {
@@ -158,15 +186,27 @@ public class MedicationActivity extends AppCompatActivity {
                     allMeds.removeIf(m -> m.fromDoctor);
                     if (snap != null) {
                         for (QueryDocumentSnapshot d : snap) {
+                            String drName = "BS. " + MedItem.nvl(d.getString("doctorName"));
+                            Object raw = d.get("items");
+                            if (raw instanceof List) {
+                                @SuppressWarnings("unchecked") List<Object> items = (List<Object>)raw;
+                                if (!items.isEmpty()) {
+                                    for (Object obj : items) {
+                                        if (!(obj instanceof Map)) continue;
+                                        @SuppressWarnings("unchecked") Map<String, Object> map = (Map<String, Object>) obj;
+                                        allMeds.add(new MedItem(map, drName, Boolean.TRUE.equals(d.getBoolean("isDemoPrice"))));
+                                    }
+                                    continue;
+                                }
+                            }
+                            // Tương thích đơn thuốc cũ, trước khi có danh mục nhiều thuốc.
                             String medicine = d.getString("medicine");
-                            if (medicine == null || medicine.isEmpty())
-                                continue;
+                            if (medicine == null || medicine.isEmpty()) continue;
                             String method = MedItem.nvl(d.getString("method"));
                             Long times = d.getLong("timesPerDay");
                             String freq = (times != null ? times + " lần/ngày" : "")
                                     + (method.isEmpty() ? "" : " – " + method);
                             String guide = MedItem.nvl(d.getString("guide"));
-                            String drName = "BS. " + MedItem.nvl(d.getString("doctorName"));
                             allMeds.add(new MedItem(medicine, guide, method, freq, drName));
                         }
                     }
@@ -178,9 +218,9 @@ public class MedicationActivity extends AppCompatActivity {
     private void applyFilter() {
         filtered.clear();
         for (MedItem m : allMeds) {
-            // Thuốc bác sĩ kê luôn hiển thị trong tab ALL, ẩn ở các tab buổi
+            // Thuốc bác sĩ kê hiển thị theo đúng các buổi mà bác sĩ đã lựa chọn.
             if (m.fromDoctor) {
-                if ("ALL".equals(currentFilter))
+                if ("ALL".equals(currentFilter) || m.timeKeys.contains(currentFilter))
                     filtered.add(m);
             } else {
                 if ("ALL".equals(currentFilter) || currentFilter.equals(m.timeKey))
@@ -307,10 +347,11 @@ public class MedicationActivity extends AppCompatActivity {
             MedItem m = filtered.get(pos);
             h.name.setText(m.name);
             h.dosage.setText(m.dosage.isEmpty() ? "Theo chỉ dẫn bác sĩ" : m.dosage);
-            h.freq.setText(m.frequency);
+            h.freq.setText(m.frequency + m.priceLabel);
 
             if (m.fromDoctor) {
-                h.time.setText(m.doctorName != null ? m.doctorName : "Bác sĩ kê đơn");
+                h.time.setText((m.timeLabel.isEmpty() ? "Theo chỉ định" : m.timeLabel)
+                        + (m.doctorName == null || m.doctorName.isEmpty() ? "" : " • " + m.doctorName));
                 if (h.badge != null) {
                     h.badge.setVisibility(View.VISIBLE);
                     h.badge.setText("🩺 Bác sĩ kê");

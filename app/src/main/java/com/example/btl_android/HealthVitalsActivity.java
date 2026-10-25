@@ -1,13 +1,10 @@
 package com.example.btl_android;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,10 +16,13 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +31,13 @@ public class HealthVitalsActivity extends AppCompatActivity {
 
     private String patientId, appointmentId;
     private boolean doctorMode;
+    // Một loại chỉ số chỉ xuất hiện một lần trong cùng lượt khám.
+    // Bản ghi cũ vẫn tồn tại trên Firestore, không tự động xóa dữ liệu cũ.
     private final List<DocumentSnapshot> vitals = new ArrayList<>();
+    private final Map<String, DocumentSnapshot> visitByType = new HashMap<>();
+    private boolean vitalsLoaded = false;
+    private boolean savingVitals = false;
+    private FloatingActionButton fabVitals;
     private VitalsAdapter adapter;
     private ListenerRegistration listener;
     private TextView txtHeartRate, txtBloodPressure, txtWeight, txtGlucose, txtEmpty;
@@ -45,6 +51,17 @@ public class HealthVitalsActivity extends AppCompatActivity {
         "weight", "glucose", "temperature", "spo2"
     };
     private static final String[] ICONS = { "❤️", "💉", "💉", "⚖️", "🩸", "🌡️", "💨" };
+    // Dải kiểm tra giá trị nhập hợp lý (không dùng để chẩn đoán bệnh).
+    private static final double[] MIN_VALUES = { 20, 50, 30, 1, 20, 30, 50 };
+    private static final double[] MAX_VALUES = { 250, 260, 180, 400, 600, 45, 100 };
+    private static final int[] INPUT_IDS = {
+        R.id.edtAllHeartRate, R.id.edtAllSystolic, R.id.edtAllDiastolic,
+        R.id.edtAllWeight, R.id.edtAllGlucose, R.id.edtAllTemperature, R.id.edtAllSpo2
+    };
+    private static final int[] LAYOUT_IDS = {
+        R.id.tilAllHeartRate, R.id.tilAllSystolic, R.id.tilAllDiastolic,
+        R.id.tilAllWeight, R.id.tilAllGlucose, R.id.tilAllTemperature, R.id.tilAllSpo2
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,12 +87,13 @@ public class HealthVitalsActivity extends AppCompatActivity {
         adapter = new VitalsAdapter();
         rv.setAdapter(adapter);
 
-        FloatingActionButton fab = findViewById(R.id.fabAdd);
+        fabVitals = findViewById(R.id.fabAdd);
         if (doctorMode) {
-            fab.setVisibility(View.VISIBLE);
-            fab.setOnClickListener(v -> showAddDialog());
+            fabVitals.setVisibility(View.VISIBLE);
+            fabVitals.setEnabled(false); // Chờ tải dữ liệu để không tạo trùng
+            fabVitals.setOnClickListener(v -> showAllVitalsDialog());
         } else {
-            fab.setVisibility(View.GONE);
+            fabVitals.setVisibility(View.GONE);
         }
 
         loadVitals();
@@ -86,18 +104,63 @@ public class HealthVitalsActivity extends AppCompatActivity {
                 .document(patientId).collection("records");
         if (doctorMode) query = query.whereEqualTo("appointmentId", appointmentId);
         listener = query.addSnapshotListener((snap, e) -> {
-                    if (e != null) { App.error(this,e); return; }
-                    vitals.clear();
-                    if (snap != null) for (QueryDocumentSnapshot d : snap) vitals.add(d);
-                    Collections.sort(vitals, (a, b) -> {
-                        Timestamp at = a.getTimestamp("recordedAt"), bt = b.getTimestamp("recordedAt");
-                        if (at == null || bt == null) return 0;
-                        return bt.compareTo(at);
-                    });
-                    updateSummary();
-                    txtEmpty.setVisibility(vitals.isEmpty() ? View.VISIBLE : View.GONE);
-                    adapter.notifyDataSetChanged();
-                });
+            if (e != null) {
+                App.error(this, e);
+                return;
+            }
+            List<DocumentSnapshot> all = new ArrayList<>();
+            if (snap != null) for (QueryDocumentSnapshot doc : snap) all.add(doc);
+            Collections.sort(all, (a, b) -> {
+                Timestamp at = a.getTimestamp("recordedAt");
+                Timestamp bt = b.getTimestamp("recordedAt");
+                if (at == null && bt == null) return 0;
+                if (at == null) return 1;
+                if (bt == null) return -1;
+                return bt.compareTo(at);
+            });
+
+            // Gom trùng type + appointmentId. Không gộp chỉ số của 2 lịch khám khác nhau.
+            // Với dữ liệu cũ chưa có appointmentId, dùng doc ID riêng để giữ lịch sử.
+            Map<String, DocumentSnapshot> unique = new LinkedHashMap<>();
+            for (DocumentSnapshot doc : all) {
+                String type = doc.getString("type");
+                if (type == null) continue;
+                String visit = doc.getString("appointmentId");
+                String key = visit != null && !visit.isEmpty()
+                        ? visit + "|" + type : doc.getId();
+                if (!unique.containsKey(key)
+                        || (visit != null && doc.getId().equals(visit + "_" + type))) {
+                    unique.put(key, doc);
+                }
+            }
+            vitals.clear();
+            vitals.addAll(unique.values());
+
+            visitByType.clear();
+            if (doctorMode) {
+                // Nếu bản cũ dùng document ID ngẫu nhiên, sửa ngay bản cũ đó;
+                // với dữ liệu mới, luôn ưu tiên ID cố định của lượt khám.
+                for (DocumentSnapshot doc : all) {
+                    String type = doc.getString("type");
+                    if (type == null) continue;
+                    DocumentSnapshot previous = visitByType.get(type);
+                    if (previous == null || doc.getId().equals(appointmentId + "_" + type)) {
+                        visitByType.put(type, doc);
+                    }
+                }
+            }
+            vitalsLoaded = true;
+            if (doctorMode && fabVitals != null) {
+                fabVitals.setEnabled(true);
+                boolean hasData = !visitByType.isEmpty();
+                fabVitals.setImageResource(hasData
+                        ? android.R.drawable.ic_menu_edit : R.drawable.ic_add);
+                fabVitals.setContentDescription(hasData ? "Sửa chỉ số" : "Nhập chỉ số");
+            }
+            updateSummary();
+            txtEmpty.setVisibility(vitals.isEmpty() ? View.VISIBLE : View.GONE);
+            adapter.notifyDataSetChanged();
+        });
     }
 
     private void updateSummary() {
@@ -117,65 +180,135 @@ public class HealthVitalsActivity extends AppCompatActivity {
         txtGlucose.setText(latest.getOrDefault("glucose", "--"));
     }
 
-    // Material 3 dialog: khi validateData() sai, hộp thoại không tự đóng.
-    private void showAddDialog() {
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_vital, null);
-        Spinner spinner = view.findViewById(R.id.spinnerType);
-        EditText edtValue = view.findViewById(R.id.edtValue);
-        EditText edtNote = view.findViewById(R.id.edtNote);
-        TextInputLayout tilValue = view.findViewById(R.id.tilValue);
-
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_item, TYPES);
-        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(arrayAdapter);
-
+    // Một lần mở form có thể nhập đầy đủ 7 chỉ số. Nếu đã có dữ liệu,
+    // form tự điền giá trị cũ và thao tác tiếp theo là SỬA, không thêm bản ghi.
+    private void showAllVitalsDialog() {
+        if (!doctorMode || appointmentId == null || appointmentId.trim().isEmpty()) {
+            App.note(this, "Hãy mở từ một lịch khám được phân công.");
+            return;
+        }
+        if (!vitalsLoaded || savingVitals) {
+            App.note(this, "Đang tải hoặc lưu dữ liệu, vui lòng kiểm tra lại.");
+            return;
+        }
+        final boolean editing = !visitByType.isEmpty();
+        View form = LayoutInflater.from(this).inflate(R.layout.dialog_vitals_all, null);
+        EditText[] inputs = new EditText[INPUT_IDS.length];
+        TextInputLayout[] layouts = new TextInputLayout[LAYOUT_IDS.length];
+        String noteValue = "";
+        for (int i = 0; i < inputs.length; i++) {
+            inputs[i] = form.findViewById(INPUT_IDS[i]);
+            layouts[i] = form.findViewById(LAYOUT_IDS[i]);
+            DocumentSnapshot existing = visitByType.get(TYPE_KEYS[i]);
+            if (existing != null) {
+                String value = existing.getString("value");
+                if (value != null) inputs[i].setText(value);
+                if (noteValue.isEmpty() && existing.getString("note") != null) {
+                    noteValue = existing.getString("note");
+                }
+            }
+        }
+        EditText edtNote = form.findViewById(R.id.edtAllVitalNote);
+        edtNote.setText(noteValue);
+        TextView txtError = form.findViewById(R.id.txtAllVitalError);
         androidx.appcompat.app.AlertDialog dialog = new MaterialAlertDialogBuilder(this)
-                .setTitle("Thêm chỉ số sức khỏe")
-                .setView(view)
-                .setPositiveButton("Lưu", null)
+                .setTitle(editing ? "Sửa chỉ số sức khỏe" : "Nhập chỉ số sức khỏe")
+                .setView(form)
+                .setPositiveButton(editing ? "Lưu thay đổi" : "Lưu tất cả", null)
                 .setNegativeButton("Hủy", null)
                 .create();
         dialog.setOnShowListener(ignored -> dialog.getButton(
                 android.content.DialogInterface.BUTTON_POSITIVE).setOnClickListener(button -> {
-            if (!validateData(edtValue, tilValue)) return;
-            int position = spinner.getSelectedItemPosition();
-            Map<String, Object> data = new HashMap<>();
-            data.put("type", TYPE_KEYS[position]);
-            data.put("label", TYPES[position]);
-            data.put("value", App.value(edtValue).replace(',', '.'));
-            data.put("icon", ICONS[position]);
-            data.put("note", App.value(edtNote));
-            data.put("recordedAt", FieldValue.serverTimestamp());
-            data.put("createdBy", App.uid());
-            if (doctorMode) data.put("appointmentId", appointmentId);
-            App.db().collection("health_vitals").document(patientId)
-                    .collection("records").add(data)
-                    .addOnSuccessListener(ref -> App.note(this, "Đã lưu chỉ số"))
-                    .addOnFailureListener(error -> App.error(this, error));
-            dialog.dismiss();
+            if (savingVitals) return;
+            txtError.setText("");
+            boolean invalid = false;
+            int provided = 0;
+            String[] values = new String[inputs.length];
+            for (int i = 0; i < inputs.length; i++) {
+                layouts[i].setError(null);
+                String v = App.value(inputs[i]).replace(',', '.');
+                values[i] = v;
+                if (v.isEmpty()) continue;
+                provided++;
+                try {
+                    double number = Double.parseDouble(v);
+                    if (!Double.isFinite(number) || number < MIN_VALUES[i] || number > MAX_VALUES[i]) {
+                        layouts[i].setError("Vui lòng kiểm tra lại giá trị.");
+                        invalid = true;
+                    }
+                } catch (NumberFormatException ex) {
+                    layouts[i].setError("Chỉ nhập số hợp lệ.");
+                    invalid = true;
+                }
+            }
+            if (!values[1].isEmpty() && !values[2].isEmpty() && !invalid
+                    && Double.parseDouble(values[1]) <= Double.parseDouble(values[2])) {
+                layouts[2].setError("Tâm trương phải nhỏ hơn tâm thu.");
+                invalid = true;
+            }
+            if (provided == 0) {
+                txtError.setText("Hãy nhập ít nhất một chỉ số.");
+                return;
+            }
+            if (invalid) return;
+            WriteBatch batch = App.db().batch();
+            String note = App.value(edtNote);
+            int changes = 0;
+            for (int i = 0; i < values.length; i++) {
+                if (values[i].isEmpty()) {
+                    // Ô trống = chưa đo, không tự động xóa chỉ số cũ.
+                    continue;
+                }
+                DocumentSnapshot existing = visitByType.get(TYPE_KEYS[i]);
+                if (existing == null) {
+                    // Document ID cố định để bấm lưu nhiều lần không tạo thêm bản ghi.
+                    DocumentReference record = App.db().collection("health_vitals")
+                            .document(patientId).collection("records")
+                            .document(appointmentId + "_" + TYPE_KEYS[i]);
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("type", TYPE_KEYS[i]);
+                    data.put("label", TYPES[i]);
+                    data.put("value", values[i]);
+                    data.put("icon", ICONS[i]);
+                    data.put("note", note);
+                    data.put("recordedAt", FieldValue.serverTimestamp());
+                    data.put("createdBy", App.uid());
+                    data.put("appointmentId", appointmentId);
+                    batch.set(record, data);
+                    changes++;
+                } else {
+                    String oldValue = existing.getString("value");
+                    String oldNote = existing.getString("note");
+                    if (!values[i].equals(oldValue) || !note.equals(oldNote == null ? "" : oldNote)) {
+                        // Sửa trên document hiện có, kể cả document cũ ID ngẫu nhiên.
+                        // Giữ nguyên recordedAt và createdBy.
+                        batch.update(existing.getReference(), "value", values[i], "note", note);
+                        changes++;
+                    }
+                }
+            }
+            if (changes == 0) {
+                App.note(this, "Không có thay đổi mới.");
+                dialog.dismiss();
+                return;
+            }
+            savingVitals = true;
+            button.setEnabled(false);
+            txtError.setText("Đang lưu các chỉ số...");
+            batch.commit()
+                    .addOnSuccessListener(unused -> {
+                        savingVitals = false;
+                        App.note(this, editing ? "Đã cập nhật chỉ số." : "Đã lưu chỉ số.");
+                        dialog.dismiss();
+                    })
+                    .addOnFailureListener(error -> {
+                        savingVitals = false;
+                        button.setEnabled(true);
+                        txtError.setText("Không lưu được: " + error.getLocalizedMessage()
+                                + "\nKiểm tra quyền Firestore của health_vitals.");
+                    });
         }));
         dialog.show();
-    }
-
-    private boolean validateData(EditText edtValue, TextInputLayout tilValue) {
-        tilValue.setError(null);
-        String text = App.value(edtValue).replace(',', '.');
-        if (text.isEmpty()) {
-            tilValue.setError("Vui lòng nhập chỉ số sức khỏe");
-            return false;
-        }
-        try {
-            double value = Double.parseDouble(text);
-            if (Double.isNaN(value) || Double.isInfinite(value) || value <= 0) {
-                tilValue.setError("Giá trị phải là số lớn hơn 0");
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            tilValue.setError("Vui lòng nhập số hợp lệ");
-            return false;
-        }
-        return true;
     }
 
     @Override
@@ -228,30 +361,38 @@ public class HealthVitalsActivity extends AppCompatActivity {
                 try { int v = Integer.parseInt(val); warning = v < 60 || v > 100; } catch (Exception ignored) {}
             } else if ("bp_systolic".equals(typeKey)) {
                 try { int v = Integer.parseInt(val); warning = v < 90 || v > 140; } catch (Exception ignored) {}
+            } else if ("bp_diastolic".equals(typeKey)) {
+                try { double v = Double.parseDouble(val); warning = v < 50 || v > 110; } catch (Exception ignored) {}
             } else if ("glucose".equals(typeKey)) {
-                try { int v = Integer.parseInt(val); warning = v < 70 || v > 140; } catch (Exception ignored) {}
+                try { double v = Double.parseDouble(val); warning = v < 70 || v > 140; } catch (Exception ignored) {}
+            } else if ("spo2".equals(typeKey)) {
+                try { double v = Double.parseDouble(val); warning = v < 95 || v > 100; } catch (Exception ignored) {}
+            } else if ("temperature".equals(typeKey)) {
+                try { double v = Double.parseDouble(val); warning = v < 35 || v > 38; } catch (Exception ignored) {}
             }
             if (warning) {
-                h.status.setText("⚠️ Chú ý");
+                h.status.setText("⚠️ Kiểm tra");
                 h.status.setTextColor(0xFFF59E0B);
                 h.status.setBackgroundResource(R.drawable.bg_badge_amber);
             } else {
-                h.status.setText("✓ Bình thường");
+                // Không kết luận "bình thường" chỉ từ một chỉ số đơn lẻ.
+                h.status.setText("✓ Đã ghi nhận");
                 h.status.setTextColor(0xFF10B981);
                 h.status.setBackgroundResource(R.drawable.bg_badge_green);
             }
 
-            // Xóa chỉ số (Chỉ bác sĩ mới được xóa)
-            if (h.del != null) h.del.setVisibility(doctorMode ? View.VISIBLE : View.GONE);
-            if (h.del != null && doctorMode) {
-                h.del.setOnClickListener(v -> new AlertDialog.Builder(HealthVitalsActivity.this)
-                        .setTitle("🗑️ Xóa chỉ số")
-                        .setMessage("Xóa bản ghi " + (label != null ? label : "này") + "?")
-                        .setPositiveButton("Xóa", (dlg, w) -> d.getReference().delete()
-                                .addOnSuccessListener(x -> App.note(HealthVitalsActivity.this, "Đã xóa chỉ số"))
-                                .addOnFailureListener(e -> App.error(HealthVitalsActivity.this, e)))
-                        .setNegativeButton("Hủy", null).show());
+            // Chỉ sửa: không có nút xóa để tránh bác sĩ tạo lại 2–3 lần.
+            if (h.del != null) {
+                h.del.setVisibility(doctorMode ? View.VISIBLE : View.GONE);
+                if (doctorMode) {
+                    h.del.setText("Sửa");
+                    h.del.setContentDescription("Sửa " + (label == null ? "chỉ số" : label));
+                    h.del.setTextColor(0xFF0D6EFD);
+                    h.del.setBackgroundResource(R.drawable.bg_badge_green);
+                    h.del.setOnClickListener(v -> showAllVitalsDialog());
+                }
             }
+            h.itemView.setOnClickListener(doctorMode ? v -> showAllVitalsDialog() : null);
         }
     }
 }

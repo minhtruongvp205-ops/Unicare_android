@@ -224,24 +224,40 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDrVitals"
+            <!-- Một nơi để khám bệnh từ đầu đến cuối, không để thao tác rời rạc ở trang chủ. -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="8dp"
-                android:text="📊 Nhập chỉ số sức khỏe cho bệnh nhân"
-                android:textAllCaps="false"
-                style="@style/Widget.UniCare.Button" />
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDrMedication"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="8dp"
-                android:text="💊 Kê lịch uống thuốc cho bệnh nhân"
-                android:textAllCaps="false"
-                style="@style/Widget.UniCare.Button" />
+                android:layout_marginTop="14dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="3dp"
+                app:cardBackgroundColor="#FFFFFF">
+                <LinearLayout android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🩺  Tiếp nhận &amp; khám bệnh"
+                        android:textColor="#1A1A2E"
+                        android:textStyle="bold"
+                        android:textSize="16sp"/>
+                    <TextView android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="#6B7280"
+                        android:textSize="12sp"/>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnDrStartExam"
+                        style="@style/Widget.UniCare.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="Bắt đầu / tiếp tục khám"
+                        android:textAllCaps="false"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Section: Công cụ bác sĩ -->
             <TextView
@@ -298,7 +314,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="1dp"
-                            android:text="Xác nhận, từ chối, nhập bệnh án"
+                            android:text="Xác nhận lịch và mở phiếu khám tổng hợp"
                             android:textColor="#9CA3AF"
                             android:textSize="11sp" />
                     </LinearLayout>

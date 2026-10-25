@@ -1,117 +1,142 @@
-<?xml version='1.0' encoding='utf-8'?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/main" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#F0F4FF">
-  <ScrollView android:layout_width="0dp" android:layout_height="0dp" android:fillViewport="true" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent">
-
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
-
-        <!-- Top AppBar with gradient -->
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/gradient_header" android:paddingTop="48dp" android:paddingBottom="24dp" android:paddingHorizontal="8dp" android:gravity="center_vertical" android:orientation="horizontal">
-
-            <ImageButton android:id="@+id/btnBack" android:layout_width="44dp" android:layout_height="44dp" android:background="@drawable/bg_icon_circle_blue" android:src="@drawable/ic_arrow_back" android:contentDescription="Quay lại" android:padding="10dp" android:alpha="0.85"/>
-
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
-
-                <TextView android:id="@+id/txtScreenTitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Nhập / chỉnh sửa bệnh án" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold"/>
-
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Chỉ bác sĩ được phân công mới có quyền ghi" android:textColor="#C7D9FF" android:textSize="11sp"/>
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#F0F4FF">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp" android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical" android:paddingBottom="32dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:gravity="center_vertical" android:orientation="horizontal"
+                android:paddingHorizontal="12dp" android:paddingTop="42dp" android:paddingBottom="24dp"
+                android:background="@drawable/gradient_header">
+                <ImageButton android:id="@+id/btnBack" android:layout_width="44dp"
+                    android:layout_height="44dp" android:padding="10dp"
+                    android:contentDescription="Quay lại" android:src="@drawable/ic_arrow_back"
+                    android:background="@drawable/bg_icon_circle_blue"/>
+                <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                    android:layout_weight="1" android:layout_marginStart="10dp"
+                    android:orientation="vertical">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="Phiếu khám tổng hợp" android:textSize="19sp"
+                        android:textStyle="bold" android:textColor="#FFFFFF"/>
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="3dp" android:text="Từ tiếp nhận đến hoàn tất lượt khám"
+                        android:textSize="11sp" android:textColor="#C7D9FF"/>
+                </LinearLayout>
             </LinearLayout>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp" android:layout_marginTop="14dp"
+                app:cardCornerRadius="16dp" app:cardBackgroundColor="#FFFFFF">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="01  THÔNG TIN BỆNH NHÂN" android:textColor="#0D6EFD"
+                        android:textStyle="bold" android:textSize="14sp"/>
+                    <TextView android:id="@+id/txtAppointment" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="9dp"
+                        android:textColor="#1A1A2E" android:textSize="14sp"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp" android:layout_marginTop="12dp"
+                app:cardCornerRadius="16dp" app:cardBackgroundColor="#FFFFFF">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="02  CHỈ SỐ SỨC KHỎE" android:textColor="#0D6EFD"
+                        android:textStyle="bold" android:textSize="14sp"/>
+                    <TextView android:id="@+id/txtVisitVitals" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="9dp"
+                        android:text="Chưa có chỉ số cho lượt khám này" android:textColor="#6B7280"
+                        android:textSize="12sp" />
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnVisitVitals" style="@style/Widget.UniCare.Button"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" android:textAllCaps="false"
+                        android:text="+ Nhập / xem chỉ số sức khỏe"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp" android:layout_marginTop="12dp"
+                app:cardCornerRadius="16dp" app:cardBackgroundColor="#FFFFFF">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="03  KẾT QUẢ KHÁM BỆNH" android:textColor="#0D6EFD"
+                        android:textStyle="bold" android:textSize="14sp" />
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilDiagnosis" style="@style/Widget.UniCare.TextInputLayout"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp" android:hint="Chẩn đoán">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edtDiagnosis" android:layout_width="match_parent"
+                            android:layout_height="wrap_content" android:inputType="textMultiLine"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.UniCare.TextInputLayout"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp" android:hint="Kết quả khám và dặn dò">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/edtNotes" android:layout_width="match_parent"
+                            android:layout_height="wrap_content" android:inputType="textMultiLine"
+                            android:minLines="2"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp" android:layout_marginTop="12dp"
+                app:cardCornerRadius="16dp" app:cardBackgroundColor="#FFFFFF">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:padding="16dp">
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="04  KÊ ĐƠN THUỐC &amp; LỊCH UỐNG" android:textColor="#0D6EFD"
+                        android:textStyle="bold" android:textSize="14sp"/>
+                    <TextView android:id="@+id/txtCatalogDisclaimer"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp" android:textColor="#6B7280"
+                        android:textSize="12sp" android:visibility="gone"/>
+                    <TextView android:id="@+id/txtOldPrescription"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp" android:textColor="#6B7280"
+                        android:textSize="12sp" android:visibility="gone"/>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerPrescription" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:nestedScrollingEnabled="false"
+                        android:layout_marginTop="12dp"/>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAddMedicine" style="@style/Widget.UniCare.Button"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp" android:textAllCaps="false"
+                        android:text="+ Chọn nhiều thuốc từ danh mục"/>
+                    <TextView android:id="@+id/txtPrescriptionTotal" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="10dp"
+                        android:text="Tổng tạm tính: 0 đ" android:textColor="#0D6EFD"
+                        android:textStyle="bold" android:textSize="15sp"/>
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp" android:textColor="#6B7280" android:textSize="11sp"
+                        android:text="Không bắt buộc kê thuốc. Bác sĩ tự quyết định loại, liều lượng và thời điểm sử dụng."/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveRecord" style="@style/Widget.UniCare.Button"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp" android:layout_marginTop="18dp"
+                android:minHeight="55dp" android:text="Hoàn tất khám &amp; lưu hồ sơ"
+                android:textAllCaps="false" android:textSize="16sp"/>
+            <TextView android:id="@+id/txtMessage" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="8dp" android:gravity="center"
+                android:textColor="#D32F2F" android:textSize="12sp"/>
         </LinearLayout>
-
-        <!-- Appointment Info Card -->
-        <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="16dp" android:layout_marginTop="20dp" app:cardCornerRadius="20dp" app:cardElevation="4dp" app:cardBackgroundColor="#FFFFFF">
-
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-
-                    <LinearLayout android:layout_width="40dp" android:layout_height="40dp" android:background="@drawable/bg_icon_circle_blue" android:gravity="center">
-                        <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_calendar" android:contentDescription="Lịch khám"/>
-                    </LinearLayout>
-
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:text="Thông tin lịch khám" android:textColor="#1A1A2E" android:textSize="15sp" android:textStyle="bold"/>
-                </LinearLayout>
-
-                <TextView android:id="@+id/txtAppointment" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/bg_section" android:padding="14dp" android:text="Lịch khám" android:textSize="14sp" android:textColor="#6B7280" android:lineSpacingMultiplier="1.4"/>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Diagnosis Card -->
-        <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="16dp" android:layout_marginTop="12dp" app:cardCornerRadius="20dp" app:cardElevation="4dp" app:cardBackgroundColor="#FFFFFF">
-
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-
-                    <LinearLayout android:layout_width="36dp" android:layout_height="36dp" android:background="@drawable/bg_icon_circle_teal" android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Rx" android:textColor="#FFFFFF" android:textSize="11sp" android:textStyle="bold"/>
-                    </LinearLayout>
-
-                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:text="Chẩn đoán &amp; Đơn thuốc" android:textColor="#1A1A2E" android:textSize="15sp" android:textStyle="bold"/>
-                </LinearLayout>
-
-                <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:hint="Chẩn đoán" style="@style/Widget.UniCare.TextInputLayout" android:id="@+id/tilDiagnosis">
-                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/edtDiagnosis" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="text" android:minHeight="52dp"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:hint="Đơn thuốc (mô tả)" style="@style/Widget.UniCare.TextInputLayout" android:id="@+id/tilPrescription">
-                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/edtPrescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textMultiLine" android:lines="2" android:gravity="top" android:minHeight="52dp"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:hint="Ghi chú bác sĩ" style="@style/Widget.UniCare.TextInputLayout" android:id="@+id/tilNotes">
-                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/edtNotes" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textMultiLine" android:lines="2" android:gravity="top" android:minHeight="52dp"/>
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Treatment Protocol Card -->
-        <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="16dp" android:layout_marginTop="12dp" app:cardCornerRadius="20dp" app:cardElevation="4dp" app:cardBackgroundColor="#FFFFFF">
-
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
-
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-
-                    <LinearLayout android:layout_width="36dp" android:layout_height="36dp" android:background="@drawable/bg_icon_circle_amber" android:gravity="center">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="💊" android:textSize="16sp"/>
-                    </LinearLayout>
-
-                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Phác đồ điều trị" android:textColor="#1A1A2E" android:textSize="15sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thông tin thuốc và hướng dẫn sử dụng" android:textColor="#9CA3AF" android:textSize="11sp"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:hint="Tên thuốc" style="@style/Widget.UniCare.TextInputLayout" android:id="@+id/tilMedicine">
-                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/edtMedicine" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="text" android:minHeight="52dp"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
-
-                    <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="2" android:layout_marginTop="12dp" android:layout_marginEnd="6dp" android:hint="Cách dùng" style="@style/Widget.UniCare.TextInputLayout" android:id="@+id/tilMethod">
-                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/edtMethod" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="text" android:minHeight="52dp"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.textfield.TextInputLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginTop="12dp" android:layout_marginStart="6dp" android:hint="Số lần/ngày" style="@style/Widget.UniCare.TextInputLayout" android:id="@+id/tilTimes">
-                        <com.google.android.material.textfield.TextInputEditText android:id="@+id/edtTimes" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="number" android:minHeight="52dp"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-
-                <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:hint="Mục đích điều trị" style="@style/Widget.UniCare.TextInputLayout" android:id="@+id/tilPurpose">
-                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/edtPurpose" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="text" android:minHeight="52dp"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:hint="Hướng dẫn dùng thuốc" style="@style/Widget.UniCare.TextInputLayout" android:id="@+id/tilGuide">
-                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/edtGuide" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textMultiLine" android:lines="2" android:gravity="top" android:minHeight="52dp"/>
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Save Button -->
-        <com.google.android.material.button.MaterialButton android:id="@+id/btnSaveRecord" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="16dp" android:layout_marginTop="20dp" android:text="💾  Lưu bệnh án và phác đồ" android:minHeight="56dp" android:textAllCaps="false" android:textSize="17sp" style="@style/Widget.UniCare.Button" app:cornerRadius="16dp"/>
-
-        <TextView android:id="@+id/txtMessage" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="24dp" android:layout_marginTop="12dp" android:gravity="center" android:textSize="14sp" android:textColor="#10B981"/>
-
-        <View android:layout_width="match_parent" android:layout_height="32dp"/>
-
-    </LinearLayout>
-</ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

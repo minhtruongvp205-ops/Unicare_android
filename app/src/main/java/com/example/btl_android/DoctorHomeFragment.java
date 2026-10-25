@@ -52,8 +52,14 @@ public class DoctorHomeFragment extends Fragment {
         safeClick(view, R.id.drStatCardRating, DoctorStatsActivity.class);
 
         safeClick(view, R.id.btnDrAppointments, AppointmentsActivity.class);
-        view.findViewById(R.id.btnDrVitals).setOnClickListener(v -> DoctorPatientPicker.open(getActivity(), HealthVitalsActivity.class));
-        view.findViewById(R.id.btnDrMedication).setOnClickListener(v -> DoctorPatientPicker.open(getActivity(), MedicationActivity.class));
+        // Bác sĩ bắt đầu khám từ lịch đã xác nhận. Trong phiếu khám có đầy đủ
+        // chỉ số, chẩn đoán, đơn thuốc, lịch uống và thao tác hoàn tất.
+        View btnStart = view.findViewById(R.id.btnDrStartExam);
+        if (btnStart != null) btnStart.setOnClickListener(v -> {
+            Intent i = new Intent(getContext(), AppointmentsActivity.class);
+            i.putExtra("filterStatus", "CONFIRMED");
+            startActivity(i);
+        });
         safeClick(view, R.id.btnDrRecords, RecordsActivity.class);
         
         int[] doctorButtons = {R.id.btnDrAppointments, R.id.btnDoctorStats, R.id.btnDoctorSchedule, R.id.btnDrRecords};
