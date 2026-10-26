@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -16,18 +17,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
- * Đọc đơn thuốc thật từ treatment_plans (cùng nơi bác sĩ lưu đơn).
- * Không tự động xác nhận đã thanh toán: chỉ ghi nhận yêu cầu trả tiền mặt.
+ * Chỉ hiển thị đơn thuốc có items và CHƯA có phiếu trong collection orders.
+ * Một đơn thuốc tương ứng một lịch khám; orders/{appointmentId} là phiếu của đơn đó.
+ * Phiếu ở trạng thái PENDING cũng được xem là đã tạo, nên đơn không hiện lại.
  */
 public class PaymentActivity extends AppCompatActivity {
     public static final String EXTRA_APPOINTMENT_ID = "appointmentId";
@@ -38,12 +44,20 @@ public class PaymentActivity extends AppCompatActivity {
     private EditText etAddress;
     private RadioGroup rgMethod;
     private Button btnConfirm;
+    private LinearLayout paymentFormContent;
 
+    private final List<DocumentSnapshot> allPlans = new ArrayList<>();
     private final List<DocumentSnapshot> plans = new ArrayList<>();
     private final List<Map<String, Object>> medicines = new ArrayList<>();
+    private final Set<String> orderedAppointmentIds = new HashSet<>();
+
     private PaymentItemAdapter itemAdapter;
     private DocumentSnapshot selectedPlan;
     private long selectedTotal;
+
+    private ListenerRegistration planListener, orderListener;
+    private boolean plansLoaded, ordersLoaded, creatingOrder;
+    private String plansError, ordersError;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -57,11 +71,22 @@ public class PaymentActivity extends AppCompatActivity {
         mapping();
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
-        // Chỉ có thanh toán tiền mặt mô phỏng khâu ghi nhận yêu cầu.
+        // Chưa tích hợp cổng thẻ/ví: chỉ tiếp nhận yêu cầu thanh toán tiền mặt.
         findViewById(R.id.rbCard).setEnabled(false);
         findViewById(R.id.rbWallet).setEnabled(false);
         btnConfirm.setOnClickListener(v -> confirmOrder());
-        loadPrescriptions();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (App.user() != null) startListening();
+    }
+
+    @Override
+    protected void onStop() {
+        stopListening();
+        super.onStop();
     }
 
     private void mapping() {
@@ -72,77 +97,181 @@ public class PaymentActivity extends AppCompatActivity {
         etAddress = findViewById(R.id.etAddress);
         rgMethod = findViewById(R.id.rgPaymentMethod);
         btnConfirm = findViewById(R.id.btnConfirmPayment);
-        btnConfirm.setEnabled(false);
+        paymentFormContent = findViewById(R.id.paymentFormContent);
+
         rvItems.setLayoutManager(new LinearLayoutManager(this));
         rvItems.setNestedScrollingEnabled(false);
         itemAdapter = new PaymentItemAdapter(medicines);
         rvItems.setAdapter(itemAdapter);
+        paymentFormContent.setVisibility(View.GONE);
+        btnConfirm.setEnabled(false);
     }
 
-    private void loadPrescriptions() {
-        tvStatus.setText("Đang tải đơn thuốc của bạn...");
-        App.db().collection("treatment_plans")
+    private void startListening() {
+        stopListening();
+        plansLoaded = false;
+        ordersLoaded = false;
+        plansError = null;
+        ordersError = null;
+        clearSelection();
+        tvStatus.setText("Đang kiểm tra các đơn thuốc chưa tạo phiếu yêu cầu thanh toán...");
+        paymentFormContent.setVisibility(View.GONE);
+
+        // Lấy các phiếu do chính bệnh nhân đã tạo, kể cả phiếu PENDING.
+        orderListener = App.db().collection("orders")
                 .whereEqualTo("patientId", App.uid())
-                .get()
-                .addOnSuccessListener(snapshot -> {
-                    plans.clear();
-                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
-                        Object raw = doc.get("items");
-                        if (raw instanceof List && !((List<?>) raw).isEmpty()) {
-                            plans.add(doc);
-                        }
-                    }
-                    Collections.sort(plans, (a, b) -> {
-                        com.google.firebase.Timestamp x = a.getTimestamp("createdAt");
-                        com.google.firebase.Timestamp y = b.getTimestamp("createdAt");
-                        if (x == null || y == null) return 0;
-                        return y.compareTo(x);
-                    });
-                    if (plans.isEmpty()) {
-                        tvStatus.setText("Chưa có đơn thuốc được bác sĩ kê. Hãy kiểm tra mục Hồ sơ bệnh án sau khi khám.");
-                        btnConfirm.setEnabled(false);
-                        spinnerPlans.setVisibility(View.GONE);
+                .addSnapshotListener((snapshot, error) -> {
+                    if (error != null) {
+                        ordersLoaded = false;
+                        ordersError = "Không kiểm tra được phiếu thanh toán: " + error.getLocalizedMessage();
+                        renderPlans();
                         return;
                     }
-                    spinnerPlans.setVisibility(View.VISIBLE);
-                    List<String> titles = new ArrayList<>();
-                    for (int i = 0; i < plans.size(); i++) {
-                        DocumentSnapshot doc = plans.get(i);
-                        long amount = num(doc.get("totalAmountVnd"));
-                        titles.add("Đơn " + (i + 1) + " • " + doc.getId()
-                                + " • " + PriceText.vnd(amount));
-                    }
-                    ArrayAdapter<String> labels = new ArrayAdapter<>(this,
-                            android.R.layout.simple_spinner_item, titles);
-                    labels.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinnerPlans.setAdapter(labels);
-                    spinnerPlans.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
-                        @Override public void onItemSelected(android.widget.AdapterView<?> p, View v, int pos, long id) {
-                            showPlan(plans.get(pos));
-                        }
-                        @Override public void onNothingSelected(android.widget.AdapterView<?> p) { }
-                    });
-                    String requested = getIntent().getStringExtra(EXTRA_APPOINTMENT_ID);
-                    if (!TextUtils.isEmpty(requested)) {
-                        for (int i = 0; i < plans.size(); i++) {
-                            if (plans.get(i).getId().equals(requested)) {
-                                spinnerPlans.setSelection(i);
-                                break;
-                            }
+                    if (snapshot == null) return;
+                    orderedAppointmentIds.clear();
+                    for (DocumentSnapshot order : snapshot.getDocuments()) {
+                        orderedAppointmentIds.add(order.getId());
+                        String appointmentId = order.getString("appointmentId");
+                        if (!TextUtils.isEmpty(appointmentId)) {
+                            orderedAppointmentIds.add(appointmentId);
                         }
                     }
-                })
-                .addOnFailureListener(e -> tvStatus.setText("Không tải được đơn thuốc: " + e.getLocalizedMessage()));
+                    ordersLoaded = true;
+                    ordersError = null;
+                    renderPlans();
+                });
+
+        // Nghe đơn thuốc mới: khi bác sĩ kê đơn, màn hình tự cập nhật.
+        planListener = App.db().collection("treatment_plans")
+                .whereEqualTo("patientId", App.uid())
+                .addSnapshotListener((snapshot, error) -> {
+                    if (error != null) {
+                        plansLoaded = false;
+                        plansError = "Không tải được đơn thuốc: " + error.getLocalizedMessage();
+                        renderPlans();
+                        return;
+                    }
+                    if (snapshot == null) return;
+                    allPlans.clear();
+                    allPlans.addAll(snapshot.getDocuments());
+                    plansLoaded = true;
+                    plansError = null;
+                    renderPlans();
+                });
+    }
+
+    private void stopListening() {
+        if (planListener != null) {
+            planListener.remove();
+            planListener = null;
+        }
+        if (orderListener != null) {
+            orderListener.remove();
+            orderListener = null;
+        }
+    }
+
+    private void clearSelection() {
+        selectedPlan = null;
+        selectedTotal = 0;
+        medicines.clear();
+        if (itemAdapter != null) itemAdapter.notifyDataSetChanged();
+        btnConfirm.setEnabled(false);
+    }
+
+    private void renderPlans() {
+        // Không liệt kê đơn khi chưa biết đơn nào đã lập phiếu,
+        // tránh bệnh nhân vô tình gửi yêu cầu lần thứ hai.
+        if (ordersError != null || plansError != null) {
+            paymentFormContent.setVisibility(View.GONE);
+            clearSelection();
+            tvStatus.setText(ordersError != null ? ordersError : plansError);
+            return;
+        }
+        if (!ordersLoaded || !plansLoaded) {
+            paymentFormContent.setVisibility(View.GONE);
+            btnConfirm.setEnabled(false);
+            return;
+        }
+
+        String previouslySelectedId = selectedPlan == null ? null : selectedPlan.getId();
+        plans.clear();
+        boolean hasPrescription = false;
+        for (DocumentSnapshot doc : allPlans) {
+            Object raw = doc.get("items");
+            if (!(raw instanceof List) || ((List<?>) raw).isEmpty()) continue;
+            hasPrescription = true;
+            if (!orderedAppointmentIds.contains(doc.getId())) {
+                plans.add(doc);
+            }
+        }
+        Collections.sort(plans, (a, b) -> {
+            com.google.firebase.Timestamp x = a.getTimestamp("createdAt");
+            com.google.firebase.Timestamp y = b.getTimestamp("createdAt");
+            if (x == null || y == null) return 0;
+            return y.compareTo(x);
+        });
+
+        clearSelection();
+        if (plans.isEmpty()) {
+            paymentFormContent.setVisibility(View.GONE);
+            tvStatus.setText(hasPrescription
+                    ? "Bạn đã tạo phiếu yêu cầu thanh toán cho tất cả đơn thuốc hiện có. "
+                      + "Khi bác sĩ kê đơn mới, đơn đó sẽ xuất hiện tại đây. "
+                      + "Các phiếu trước đó có thể xem trong mục Hóa đơn."
+                    : "Bạn chưa có đơn thuốc được bác sĩ kê. "
+                      + "Đơn mới sẽ xuất hiện tại đây sau khi bác sĩ lưu bệnh án.");
+            return;
+        }
+
+        paymentFormContent.setVisibility(View.VISIBLE);
+        tvStatus.setText("Có " + plans.size() + " đơn thuốc chưa tạo phiếu yêu cầu thanh toán.");
+        List<String> titles = new ArrayList<>();
+        for (int i = 0; i < plans.size(); i++) {
+            DocumentSnapshot doc = plans.get(i);
+            titles.add("Đơn " + (i + 1) + " • " + doc.getId()
+                    + " • " + PriceText.vnd(num(doc.get("totalAmountVnd"))));
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, titles);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerPlans.setAdapter(adapter);
+        spinnerPlans.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(android.widget.AdapterView<?> parent, View view, int position, long id) {
+                if (position >= 0 && position < plans.size()) showPlan(plans.get(position));
+            }
+            @Override public void onNothingSelected(android.widget.AdapterView<?> parent) {
+                clearSelection();
+            }
+        });
+
+        String requested = previouslySelectedId;
+        if (TextUtils.isEmpty(requested)) {
+            requested = getIntent().getStringExtra(EXTRA_APPOINTMENT_ID);
+        }
+        if (!TextUtils.isEmpty(requested)) {
+            for (int i = 0; i < plans.size(); i++) {
+                if (requested.equals(plans.get(i).getId())) {
+                    spinnerPlans.setSelection(i);
+                    break;
+                }
+            }
+        }
     }
 
     private void showPlan(DocumentSnapshot plan) {
+        // Phòng trường hợp đơn vừa được tạo phiếu trên thiết bị khác.
+        if (orderedAppointmentIds.contains(plan.getId())) {
+            renderPlans();
+            return;
+        }
         selectedPlan = plan;
         medicines.clear();
         Object raw = plan.get("items");
         if (raw instanceof List) {
-            for (Object element : (List<?>) raw) {
-                if (element instanceof Map) {
-                    @SuppressWarnings("unchecked") Map<String, Object> item = (Map<String, Object>) element;
+            for (Object entry : (List<?>) raw) {
+                if (entry instanceof Map) {
+                    @SuppressWarnings("unchecked") Map<String, Object> item = (Map<String, Object>) entry;
                     medicines.add(item);
                 }
             }
@@ -150,15 +279,18 @@ public class PaymentActivity extends AppCompatActivity {
         itemAdapter.notifyDataSetChanged();
         selectedTotal = num(plan.get("totalAmountVnd"));
         tvTotal.setText("Tổng tiền thuốc dự kiến: " + PriceText.vnd(selectedTotal));
-        tvStatus.setText("Đơn thuốc của bác sĩ • " + medicines.size() + " loại thuốc");
-        btnConfirm.setEnabled(!medicines.isEmpty());
+        btnConfirm.setEnabled(!creatingOrder && !medicines.isEmpty());
     }
 
     private void confirmOrder() {
-        if (selectedPlan == null || medicines.isEmpty()) {
-            Toast.makeText(this, "Chưa chọn đơn thuốc", Toast.LENGTH_SHORT).show();
+        if (creatingOrder || selectedPlan == null || medicines.isEmpty()) return;
+        final String appointmentId = selectedPlan.getId();
+        if (orderedAppointmentIds.contains(appointmentId)) {
+            Toast.makeText(this, "Đơn này đã có phiếu yêu cầu thanh toán", Toast.LENGTH_LONG).show();
+            renderPlans();
             return;
         }
+
         String address = etAddress.getText().toString().trim();
         if (address.length() < 5) {
             etAddress.setError("Nhập địa chỉ nhận thuốc (ít nhất 5 ký tự)");
@@ -169,9 +301,13 @@ public class PaymentActivity extends AppCompatActivity {
             Toast.makeText(this, "Chưa hỗ trợ thanh toán trực tuyến", Toast.LENGTH_LONG).show();
             return;
         }
+
+        creatingOrder = true;
         btnConfirm.setEnabled(false);
-        String appointmentId = selectedPlan.getId();
-        // Một lượt khám có tối đa một yêu cầu thanh toán, không tạo trùng khi bấm lại.
+        // Không đọc document orders/{id} khi chưa tồn tại: Rules có thể từ chối
+        // thao tác get trên tài liệu chưa được tạo. Danh sách orders bên trên
+        // đã loại phiếu cũ; nếu đồng thời có thao tác khác thì Rules update
+        // của orders vẫn phải từ chối việc ghi đè để không tạo phiếu trùng.
         Map<String, Object> order = new HashMap<>();
         order.put("orderId", appointmentId);
         order.put("appointmentId", appointmentId);
@@ -183,19 +319,22 @@ public class PaymentActivity extends AppCompatActivity {
         order.put("items", new ArrayList<>(medicines));
         order.put("createdAt", FieldValue.serverTimestamp());
 
-        App.db().collection("orders").document(appointmentId).set(order)
-                .addOnSuccessListener(ignored -> {
-                    Toast.makeText(this, "Đã ghi nhận yêu cầu thanh toán tiền mặt", Toast.LENGTH_LONG).show();
-                    startActivity(new Intent(this, InvoiceActivity.class)
-                            .putExtra(InvoiceActivity.EXTRA_ORDER_ID, appointmentId));
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    btnConfirm.setEnabled(true);
-                    tvStatus.setText("Không lưu được yêu cầu: " + e.getLocalizedMessage());
-                    Toast.makeText(this, "Nếu đã tạo hóa đơn, hãy xem ở mục Hóa đơn.", Toast.LENGTH_LONG).show();
-                });
+        DocumentReference orderRef = App.db().collection("orders").document(appointmentId);
+        orderRef.set(order).addOnSuccessListener(unused -> {
+            creatingOrder = false;
+            Toast.makeText(this, "Đã tạo phiếu yêu cầu thanh toán", Toast.LENGTH_LONG).show();
+            startActivity(new Intent(this, InvoiceActivity.class)
+                    .putExtra(InvoiceActivity.EXTRA_ORDER_ID, appointmentId));
+            finish();
+        }).addOnFailureListener(e -> {
+            creatingOrder = false;
+            btnConfirm.setEnabled(selectedPlan != null);
+            tvStatus.setText("Không tạo được phiếu: " + e.getLocalizedMessage()
+                    + "\nNếu phiếu đã tồn tại, hãy xem trong mục Hóa đơn.");
+        });
     }
 
-    private long num(Object obj) { return obj instanceof Number ? ((Number) obj).longValue() : 0L; }
+    private long num(Object value) {
+        return value instanceof Number ? ((Number) value).longValue() : 0L;
+    }
 }
