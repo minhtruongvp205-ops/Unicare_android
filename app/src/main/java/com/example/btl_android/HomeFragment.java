@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.net.Uri;
@@ -57,7 +55,8 @@ public class HomeFragment extends Fragment {
                 () -> startActivity(new Intent(getContext(), BookingActivity.class))));
         features.add(new Feature("Lịch sử đặt khám", R.drawable.ic_calendar,
                 () -> startActivity(new Intent(getContext(), AppointmentsActivity.class))));
-        features.add(new Feature("Thanh toán", R.drawable.ic_medical_record, () -> startActivity(new Intent(getContext(), PaymentActivity.class).putExtra("prescId", "examplePrescId"))));
+        features.add(new Feature("Thanh toán", R.drawable.ic_medical_record,
+                () -> startActivity(new Intent(getContext(), PaymentActivity.class))));
         features.add(new Feature("Hoá đơn", R.drawable.ic_medical_record, () -> startActivity(new Intent(getContext(), InvoiceActivity.class))));
 
         // Hàng 2
@@ -67,7 +66,6 @@ public class HomeFragment extends Fragment {
                 () -> startActivity(new Intent(getContext(), UserGuideActivity.class))));
         features.add(new Feature("Theo dõi tại nhà", R.drawable.ic_medical_record,
                 () -> startActivity(new Intent(getContext(), MedicationActivity.class)))); // Sử dụng nhắc nhở thuốc cho Theo dõi tại nhà
-        features.add(new Feature("Hỏi đáp (Chat)", R.drawable.ic_person, this::showComingSoon));
 
         rv.setAdapter(new FeatureAdapter(features));
     }
@@ -137,15 +135,11 @@ public class HomeFragment extends Fragment {
         }
 
         class Holder extends RecyclerView.ViewHolder {
-            ImageView icon;
             TextView title;
-            LinearLayout container;
 
             Holder(View v) {
                 super(v);
-                icon = v.findViewById(R.id.ivIcon);
                 title = v.findViewById(R.id.tvTitle);
-                container = v.findViewById(R.id.iconContainer);
             }
         }
 
@@ -159,7 +153,6 @@ public class HomeFragment extends Fragment {
         public void onBindViewHolder(@NonNull Holder h, int pos) {
             Feature f = list.get(pos);
             h.title.setText(f.title);
-            h.icon.setImageResource(f.iconRes);
             h.itemView.setOnClickListener(v -> {
                 if (f.action != null)
                     f.action.run();

@@ -47,6 +47,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="#D0E3FF"
+                android:src="@drawable/unicare_co_so_cau_giay"
+                android:contentDescription="Hình ảnh tòa nhà tại cơ sở Cầu Giấy"
                 android:scaleType="centerCrop"/>
 
             <com.google.android.material.card.MaterialCardView

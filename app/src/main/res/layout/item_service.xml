@@ -22,9 +22,11 @@
             app:cardCornerRadius="8dp"
             app:cardElevation="0dp">
             <ImageView
+                android:id="@+id/ivServiceImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#D0E3FF"
+                android:contentDescription="Ảnh minh họa dịch vụ"
                 android:scaleType="centerCrop"/>
         </com.google.android.material.card.MaterialCardView>
 

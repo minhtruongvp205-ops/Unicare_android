@@ -8,7 +8,7 @@
 
         <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Nhắc nhở thuốc" android:textColor="#FFFFFF" android:textSize="20sp" android:textStyle="bold"/>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Quản lý lịch uống thuốc hàng ngày" android:textColor="#C7D9FF" android:textSize="12sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thuốc và lịch uống theo chỉ định bác sĩ" android:textColor="#C7D9FF" android:textSize="12sp"/>
         </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton android:id="@+id/fabAdd" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="8dp" android:src="@drawable/ic_add" android:contentDescription="Thêm thuốc" app:backgroundTint="#FFFFFF" app:tint="#0D6EFD" app:fabSize="mini"/>
@@ -22,7 +22,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="📅" android:textSize="28sp"/>
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="14dp" android:orientation="vertical">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Hôm nay" android:textColor="#1A1A2E" android:textSize="15sp" android:textStyle="bold"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Đơn thuốc theo phiếu yêu cầu" android:textColor="#1A1A2E" android:textSize="15sp" android:textStyle="bold"/>
                 <TextView android:id="@+id/txtTodayProgress" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="0/0 liều đã uống" android:textColor="#9CA3AF" android:textSize="12sp"/>
             </LinearLayout>
 
@@ -44,7 +44,7 @@
         <TextView android:id="@+id/tabEvening" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:gravity="center" android:text="🌙 Tối" android:textSize="13sp" android:textColor="#6B7280"/>
     </LinearLayout>
 
-    <TextView android:id="@+id/txtEmpty" android:layout_width="0dp" android:layout_height="wrap_content" android:text="Chưa có thuốc. Nhấn + để thêm." android:textColor="#9CA3AF" android:textSize="14sp" android:gravity="center" android:padding="24dp" android:visibility="gone" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@id/sectionLayout3"/>
+    <TextView android:id="@+id/txtEmpty" android:layout_width="0dp" android:layout_height="wrap_content" android:text="Chưa có phiếu yêu cầu thanh toán. Vào Thanh toán để tạo phiếu trước." android:textColor="#9CA3AF" android:textSize="14sp" android:gravity="center" android:padding="24dp" android:visibility="gone" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@id/sectionLayout3"/>
 
     <androidx.recyclerview.widget.RecyclerView android:id="@+id/recycler" android:layout_width="0dp" android:layout_height="0dp" android:paddingTop="8dp" android:paddingBottom="16dp" android:clipToPadding="false" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@id/txtEmpty" app:layout_constraintBottom_toBottomOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -69,7 +69,7 @@
         <!-- Pending Appointments - Quick Actions -->
         <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginHorizontal="20dp" android:layout_marginTop="16dp" android:layout_marginBottom="4dp" android:text="Chờ xác nhận" android:textColor="#1A1A2E" android:textSize="16sp" android:textStyle="bold"/>
 
-        <TextView android:id="@+id/txtNoPending" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="🎉 Không có lịch nào đang chờ" android:textColor="#9CA3AF" android:textSize="14sp" android:gravity="center" android:padding="16dp" android:visibility="gone"/>
+        <TextView android:id="@+id/txtNoPending" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Không có lịch nào đang chờ" android:textColor="#9CA3AF" android:textSize="14sp" android:gravity="center" android:padding="16dp" android:visibility="gone"/>
 
         <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerPending" android:layout_width="match_parent" android:layout_height="wrap_content" android:nestedScrollingEnabled="false"/>
 

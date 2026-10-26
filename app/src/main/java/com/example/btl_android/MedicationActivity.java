@@ -3,6 +3,7 @@ package com.example.btl_android;
 import android.app.AlertDialog;
 import android.graphics.Paint;
 import android.os.Bundle;
+import com.google.firebase.Timestamp;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,9 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -39,6 +43,11 @@ public class MedicationActivity extends AppCompatActivity {
         String doctorName;
         final List<String> timeKeys = new ArrayList<>();
         String priceLabel = "";
+        String diagnosis = "", visitAt = "", notes = "";
+        String appointmentId = "", instruction = "", dose = "", schedule = "";
+        String quantity = "", unit = "", days = "", orderStatus = "";
+        long unitPriceVnd = -1, lineTotalVnd = -1;
+
 
         MedItem(DocumentSnapshot d) {
             this.doc = d;
@@ -60,30 +69,48 @@ public class MedicationActivity extends AppCompatActivity {
             this.doctorName = doctorName;
         }
 
-        /** Thuốc trong đơn kê nhiều dòng của bác sĩ. */
+        /** Một thuốc do bác sĩ kê, gắn với đúng lịch khám và phiếu yêu cầu thanh toán. */
         MedItem(Map<String, Object> item, String doctorName, boolean demoPrice) {
             this.doc = null;
             this.fromDoctor = true;
-            this.doctorName = doctorName;
-            this.name = nvl(item.get("name") == null ? null : item.get("name").toString());
-            String dose = nvl(item.get("dose") == null ? null : item.get("dose").toString());
-            String instr = nvl(item.get("instruction") == null ? null : item.get("instruction").toString());
-            this.dosage = "Liều: " + dose + (instr.isEmpty() ? "" : " • " + instr);
-            this.timeLabel = nvl(item.get("schedule") == null ? null : item.get("schedule").toString());
+            this.doctorName = normalizeDoctor(doctorName);
+            this.name = value(item.get("name"));
+            this.dose = value(item.get("dose"));
+            this.instruction = value(item.get("instruction"));
+            this.dosage = dose.isEmpty() ? "Chưa có liều dùng" : "Liều dùng: " + dose;
+            this.schedule = value(item.get("schedule"));
+            this.timeLabel = schedule;
             this.timeKey = "";
-            Number days = item.get("days") instanceof Number ? (Number)item.get("days") : null;
-            this.frequency = (days == null ? "" : days.intValue() + " ngày")
-                    + " • " + nvl(item.get("quantity") == null ? null : item.get("quantity").toString())
-                    + " " + nvl(item.get("unit") == null ? null : item.get("unit").toString());
+            this.days = value(item.get("days"));
+            this.quantity = value(item.get("quantity"));
+            this.unit = value(item.get("unit"));
+            this.frequency = (days.isEmpty() ? "" : days + " ngày")
+                    + (quantity.isEmpty() ? "" : " • SL: " + quantity + " " + unit);
             Object keys = item.get("timeKeys");
             if (keys instanceof List) {
-                for (Object key : (List<?>)keys) if (key instanceof String) timeKeys.add((String)key);
+                for (Object key : (List<?>) keys) {
+                    if (key instanceof String) timeKeys.add((String) key);
+                }
             }
-            Object total = item.get("lineTotalVnd");
-            if (total instanceof Number) {
-                priceLabel = " • " + PriceText.vnd(((Number)total).longValue())
-                        + (demoPrice ? " (giá demo)" : "");
+            if (timeKeys.isEmpty()) {
+                if (schedule.contains("Sáng")) timeKeys.add("MORNING");
+                if (schedule.contains("Trưa")) timeKeys.add("NOON");
+                if (schedule.contains("Tối")) timeKeys.add("EVENING");
             }
+            if (item.get("unitPriceVnd") instanceof Number) {
+                unitPriceVnd = ((Number) item.get("unitPriceVnd")).longValue();
+            }
+            if (item.get("lineTotalVnd") instanceof Number) {
+                lineTotalVnd = ((Number) item.get("lineTotalVnd")).longValue();
+                priceLabel = PriceText.vnd(lineTotalVnd);
+            }
+        }
+
+        static String value(Object o) { return o == null ? "" : o.toString(); }
+        static String normalizeDoctor(String name) {
+            String trimmed = nvl(name).trim();
+            if (trimmed.isEmpty()) return "Chưa có thông tin bác sĩ";
+            return trimmed.startsWith("BS.") ? trimmed : "BS. " + trimmed;
         }
 
         static String nvl(String s) {
@@ -96,7 +123,14 @@ public class MedicationActivity extends AppCompatActivity {
     private final List<MedItem> allMeds = new ArrayList<>();
     private final List<MedItem> filtered = new ArrayList<>();
     private MedicationAdapter adapter;
-    private ListenerRegistration listener;
+    private ListenerRegistration listener, ordersListener, plansListener, recordsListener;
+    private final Set<String> requestedAppointmentIds = new HashSet<>();
+    private final Map<String, String> orderStatuses = new HashMap<>();
+    private final List<DocumentSnapshot> patientPlans = new ArrayList<>();
+    private final Map<String, DocumentSnapshot> medicalRecords = new HashMap<>();
+    private boolean ordersLoaded, plansLoaded, recordsLoaded;
+    private String loadError = "";
+
     private TextView txtEmpty, txtTodayProgress, txtPercent;
     private String currentFilter = "ALL";
     private static final String TODAY = new SimpleDateFormat("yyyyMMdd", Locale.US).format(new Date());
@@ -138,7 +172,13 @@ public class MedicationActivity extends AppCompatActivity {
         setupTabFilter(R.id.tabNoon, "NOON");
         setupTabFilter(R.id.tabEvening, "EVENING");
 
-        loadMedications();
+        if (doctorMode) {
+            loadDoctorMedications();
+        } else {
+            txtEmpty.setVisibility(View.VISIBLE);
+            txtEmpty.setText("Đang tải phiếu yêu cầu thanh toán và đơn thuốc...");
+            loadPatientMedications();
+        }
     }
 
     private void setupTabFilter(int viewId, String filter) {
@@ -157,7 +197,136 @@ public class MedicationActivity extends AppCompatActivity {
         });
     }
 
-    private void loadMedications() {
+    /** Bệnh nhân chỉ thấy đơn thuốc sau khi tự tạo phiếu yêu cầu thanh toán. */
+    private void loadPatientMedications() {
+        ordersListener = App.db().collection("orders")
+                .whereEqualTo("patientId", patientId)
+                .addSnapshotListener((snap, error) -> {
+                    if (error != null) {
+                        showLoadError("Không đọc được phiếu yêu cầu thanh toán", error);
+                        return;
+                    }
+                    requestedAppointmentIds.clear();
+                    orderStatuses.clear();
+                    if (snap != null) {
+                        for (DocumentSnapshot doc : snap.getDocuments()) {
+                            String id = doc.getString("appointmentId");
+                            if (id != null && !id.isEmpty()) {
+                                requestedAppointmentIds.add(id);
+                                String status = doc.getString("status");
+                                orderStatuses.put(id, "PENDING".equals(status)
+                                        ? "Phiếu yêu cầu: Chờ thanh toán" : "Trạng thái phiếu: " + MedItem.nvl(status));
+                            }
+                        }
+                    }
+                    ordersLoaded = true;
+                    loadError = "";
+                    rebuildPatientMedications();
+                });
+
+        plansListener = App.db().collection("treatment_plans")
+                .whereEqualTo("patientId", patientId)
+                .addSnapshotListener((snap, error) -> {
+                    if (error != null) {
+                        showLoadError("Không đọc được đơn thuốc", error);
+                        return;
+                    }
+                    patientPlans.clear();
+                    if (snap != null) patientPlans.addAll(snap.getDocuments());
+                    plansLoaded = true;
+                    rebuildPatientMedications();
+                });
+
+        recordsListener = App.db().collection("medical_records")
+                .whereEqualTo("patientId", patientId)
+                .addSnapshotListener((snap, error) -> {
+                    if (error != null) {
+                        showLoadError("Không đọc được chẩn đoán", error);
+                        return;
+                    }
+                    medicalRecords.clear();
+                    if (snap != null) {
+                        for (DocumentSnapshot doc : snap.getDocuments()) {
+                            medicalRecords.put(doc.getId(), doc);
+                        }
+                    }
+                    recordsLoaded = true;
+                    rebuildPatientMedications();
+                });
+    }
+
+    private void showLoadError(String label, Exception error) {
+        loadError = label + ". Kiểm tra mạng và Firestore Rules.\n" + error.getLocalizedMessage();
+        txtEmpty.setVisibility(View.VISIBLE);
+        txtEmpty.setText(loadError);
+    }
+
+    private void rebuildPatientMedications() {
+        if (!ordersLoaded || !plansLoaded || !recordsLoaded) return;
+        loadError = "";
+        allMeds.clear();
+        List<DocumentSnapshot> sorted = new ArrayList<>(patientPlans);
+        Collections.sort(sorted, (a, b) -> {
+            Timestamp x = a.getTimestamp("createdAt");
+            Timestamp y = b.getTimestamp("createdAt");
+            if (x == null || y == null) return 0;
+            return y.compareTo(x);
+        });
+        for (DocumentSnapshot plan : sorted) {
+            String appointmentId = plan.getId();
+            if (!requestedAppointmentIds.contains(appointmentId)) continue;
+            addPlanItems(plan, medicalRecords.get(appointmentId), orderStatuses.get(appointmentId));
+        }
+        applyFilter();
+        updateProgress();
+    }
+
+    private void addPlanItems(DocumentSnapshot plan, DocumentSnapshot record, String orderStatus) {
+        String doctorName = MedItem.normalizeDoctor(plan.getString("doctorName"));
+        if ((doctorName.equals("Chưa có thông tin bác sĩ")) && record != null) {
+            doctorName = MedItem.normalizeDoctor(record.getString("doctorName"));
+        }
+        String diagnosis = record != null ? MedItem.nvl(record.getString("diagnosis")) : "";
+        String notes = record != null ? MedItem.nvl(record.getString("notes")) : "";
+        Timestamp visit = record != null ? record.getTimestamp("visitAt") : null;
+        if (visit == null) visit = plan.getTimestamp("createdAt");
+        String visitAt = visit == null ? "" : new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(visit.toDate());
+        Object raw = plan.get("items");
+        boolean hasItems = false;
+        if (raw instanceof List) {
+            for (Object o : (List<?>) raw) {
+                if (!(o instanceof Map)) continue;
+                @SuppressWarnings("unchecked") Map<String, Object> item = (Map<String, Object>) o;
+                MedItem med = new MedItem(item, doctorName, Boolean.TRUE.equals(plan.getBoolean("isDemoPrice")));
+                if (med.name.isEmpty()) continue;
+                med.appointmentId = plan.getId();
+                med.diagnosis = diagnosis;
+                med.notes = notes;
+                med.visitAt = visitAt;
+                med.orderStatus = orderStatus == null ? "" : orderStatus;
+                allMeds.add(med);
+                hasItems = true;
+            }
+        }
+        if (!hasItems) {
+            String medicine = plan.getString("medicine");
+            if (medicine != null && !medicine.trim().isEmpty()) {
+                String method = MedItem.nvl(plan.getString("method"));
+                Long times = plan.getLong("timesPerDay");
+                String freq = (times != null ? times + " lần/ngày" : "")
+                        + (method.isEmpty() ? "" : " • " + method);
+                MedItem med = new MedItem(medicine, MedItem.nvl(plan.getString("guide")), method, freq, doctorName);
+                med.appointmentId = plan.getId();
+                med.diagnosis = diagnosis;
+                med.notes = notes;
+                med.visitAt = visitAt;
+                med.orderStatus = orderStatus == null ? "" : orderStatus;
+                allMeds.add(med);
+            }
+        }
+    }
+
+    private void loadDoctorMedications() {
         // 1. Thuốc bệnh nhân tự ghi (realtime)
         com.google.firebase.firestore.Query query = App.db().collection("medications")
                 .document(patientId).collection("list");
@@ -186,7 +355,7 @@ public class MedicationActivity extends AppCompatActivity {
                     allMeds.removeIf(m -> m.fromDoctor);
                     if (snap != null) {
                         for (QueryDocumentSnapshot d : snap) {
-                            String drName = "BS. " + MedItem.nvl(d.getString("doctorName"));
+                            String drName = MedItem.normalizeDoctor(d.getString("doctorName"));
                             Object raw = d.get("items");
                             if (raw instanceof List) {
                                 @SuppressWarnings("unchecked") List<Object> items = (List<Object>)raw;
@@ -227,11 +396,31 @@ public class MedicationActivity extends AppCompatActivity {
                     filtered.add(m);
             }
         }
-        txtEmpty.setVisibility(filtered.isEmpty() ? View.VISIBLE : View.GONE);
+        if (!doctorMode && !loadError.isEmpty()) {
+            txtEmpty.setVisibility(View.VISIBLE);
+            txtEmpty.setText(loadError);
+        } else if (!doctorMode && (!ordersLoaded || !plansLoaded || !recordsLoaded)) {
+            txtEmpty.setVisibility(View.VISIBLE);
+            txtEmpty.setText("Đang tải phiếu yêu cầu thanh toán và đơn thuốc...");
+        } else if (filtered.isEmpty()) {
+            txtEmpty.setVisibility(View.VISIBLE);
+            txtEmpty.setText(doctorMode ? "Chưa có thuốc cho lượt khám này."
+                    : requestedAppointmentIds.isEmpty()
+                      ? "Chưa có thuốc để nhắc. Vào Thanh toán, chọn đơn thuốc và nhấn tạo phiếu yêu cầu thanh toán trước."
+                      : "Các phiếu đã tạo chưa có thuốc ở mục này.");
+        } else {
+            txtEmpty.setVisibility(View.GONE);
+        }
         adapter.notifyDataSetChanged();
     }
 
     private void updateProgress() {
+        if (!doctorMode) {
+            txtTodayProgress.setText(allMeds.size() + " loại thuốc thuộc "
+                    + requestedAppointmentIds.size() + " phiếu yêu cầu thanh toán");
+            txtPercent.setText(requestedAppointmentIds.size() + " phiếu");
+            return;
+        }
         long total = 0, done = 0;
         for (MedItem m : allMeds) {
             if (m.fromDoctor)
@@ -308,15 +497,17 @@ public class MedicationActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        if (listener != null)
-            listener.remove();
+        if (listener != null) listener.remove();
+        if (ordersListener != null) ordersListener.remove();
+        if (plansListener != null) plansListener.remove();
+        if (recordsListener != null) recordsListener.remove();
         super.onDestroy();
     }
 
     // ──────────────────────────────────────────────────────────────────
     private class MedicationAdapter extends RecyclerView.Adapter<MedicationAdapter.Holder> {
         class Holder extends RecyclerView.ViewHolder {
-            TextView chk, name, dosage, time, freq, del, badge;
+            TextView chk, name, dosage, time, freq, del, badge, diagnosis, hint;
 
             Holder(View v) {
                 super(v);
@@ -326,7 +517,9 @@ public class MedicationActivity extends AppCompatActivity {
                 time = v.findViewById(R.id.txtTime);
                 freq = v.findViewById(R.id.txtFrequency);
                 del = v.findViewById(R.id.btnDelete);
-                badge = v.findViewById(R.id.txtBadge); // nullable – chỉ trong layout mới
+                badge = v.findViewById(R.id.txtBadge);
+                diagnosis = v.findViewById(R.id.txtDiagnosis);
+                hint = v.findViewById(R.id.txtOpenDetails);
             }
         }
 
@@ -346,67 +539,88 @@ public class MedicationActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull Holder h, int pos) {
             MedItem m = filtered.get(pos);
             h.name.setText(m.name);
-            h.dosage.setText(m.dosage.isEmpty() ? "Theo chỉ dẫn bác sĩ" : m.dosage);
-            h.freq.setText(m.frequency + m.priceLabel);
-
+            h.dosage.setText(m.dosage.isEmpty() ? "Theo hướng dẫn bác sĩ" : m.dosage);
+            h.freq.setText(m.frequency + (m.priceLabel.isEmpty() ? "" : " • " + m.priceLabel));
+            h.diagnosis.setVisibility(m.fromDoctor ? View.VISIBLE : View.GONE);
             if (m.fromDoctor) {
+                h.diagnosis.setText("Chẩn đoán: " + (m.diagnosis.isEmpty() ? "Chưa cập nhật" : m.diagnosis));
                 h.time.setText((m.timeLabel.isEmpty() ? "Theo chỉ định" : m.timeLabel)
-                        + (m.doctorName == null || m.doctorName.isEmpty() ? "" : " • " + m.doctorName));
-                if (h.badge != null) {
-                    h.badge.setVisibility(View.VISIBLE);
-                    h.badge.setText("🩺 Bác sĩ kê");
-                }
-                h.chk.setText("📋");
-                h.chk.setOnClickListener(null);
-                h.name.setPaintFlags(h.name.getPaintFlags() & ~android.graphics.Paint.STRIKE_THRU_TEXT_FLAG);
-                if (h.del != null)
-                    h.del.setVisibility(View.INVISIBLE);
+                        + " • " + m.doctorName);
+                h.badge.setVisibility(View.VISIBLE);
+                h.chk.setText("💊");
+                h.chk.setOnClickListener(v -> showMedicationDetails(m));
+                h.name.setPaintFlags(h.name.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
+                h.del.setVisibility(View.GONE);
+                h.hint.setVisibility(View.VISIBLE);
+                h.itemView.setOnClickListener(v -> showMedicationDetails(m));
                 h.itemView.setOnLongClickListener(null);
             } else {
-                String lbl = m.timeLabel;
-                h.time.setText(lbl.replace(" (Morning)", "").replace(" (Noon)", "").replace(" (Evening)", ""));
-                if (h.badge != null)
-                    h.badge.setVisibility(View.GONE);
-
+                h.time.setText(m.timeLabel.replace(" (Morning)", "")
+                        .replace(" (Noon)", "").replace(" (Evening)", ""));
+                h.badge.setVisibility(View.GONE);
+                h.hint.setVisibility(View.GONE);
+                h.itemView.setOnClickListener(v -> showMedicationDetails(m));
                 Boolean doneFlag = m.doc != null ? m.doc.getBoolean("doneToday_" + TODAY) : null;
                 boolean isDone = Boolean.TRUE.equals(doneFlag);
                 h.chk.setText(isDone ? "✅" : "⬜");
                 h.name.setPaintFlags(isDone
                         ? h.name.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG
                         : h.name.getPaintFlags() & ~Paint.STRIKE_THRU_TEXT_FLAG);
-
                 h.chk.setOnClickListener(doctorMode ? null : v -> {
-                    if (m.doc == null)
-                        return;
+                    if (m.doc == null) return;
                     Map<String, Object> upd = new HashMap<>();
                     upd.put("doneToday_" + TODAY, !isDone);
-                    m.doc.getReference().update(upd).addOnSuccessListener(x -> updateProgress());
+                    m.doc.getReference().update(upd)
+                            .addOnSuccessListener(x -> updateProgress());
                 });
-
-                if (h.del != null) {
-                    h.del.setVisibility(doctorMode ? View.VISIBLE : View.GONE);
-                    if (doctorMode) {
-                        h.del.setOnClickListener(v -> new AlertDialog.Builder(MedicationActivity.this)
-                                .setMessage("Xóa thuốc " + m.name + "?")
-                                .setPositiveButton("Xóa", (dlg, w) -> {
-                                    if (m.doc != null)
-                                        m.doc.getReference().delete()
-                                                .addOnSuccessListener(x -> App.note(MedicationActivity.this, "Đã xóa"));
-                                })
-                                .setNegativeButton("Hủy", null).show());
-                    }
-                }
-
+                h.del.setVisibility(doctorMode ? View.VISIBLE : View.GONE);
                 if (doctorMode) {
-                    h.itemView.setOnLongClickListener(v -> {
-                        showEditDialog(m.doc);
-                        return true;
-                    });
+                    h.del.setOnClickListener(v -> new AlertDialog.Builder(MedicationActivity.this)
+                            .setMessage("Xóa thuốc " + m.name + "?")
+                            .setPositiveButton("Xóa", (dlg, w) -> {
+                                if (m.doc != null) m.doc.getReference().delete()
+                                        .addOnSuccessListener(x -> App.note(MedicationActivity.this, "Đã xóa"));
+                            })
+                            .setNegativeButton("Hủy", null).show());
+                    h.itemView.setOnLongClickListener(v -> { showEditDialog(m.doc); return true; });
                 } else {
                     h.itemView.setOnLongClickListener(null);
                 }
             }
         }
+    }
+
+    /** Bấm vào bất kỳ dòng thuốc nào để xem đầy đủ kết quả khám và chỉ định. */
+    private void showMedicationDetails(MedItem m) {
+        StringBuilder sb = new StringBuilder();
+        if (m.fromDoctor) {
+            sb.append("CHẨN ĐOÁN / BỆNH LÝ\n")
+                    .append(m.diagnosis.isEmpty() ? "Chưa có thông tin chẩn đoán" : m.diagnosis)
+                    .append("\n\nBÁC SĨ KHÁM\n").append(m.doctorName);
+            if (!m.visitAt.isEmpty()) sb.append("\nNgày khám: ").append(m.visitAt);
+            if (!m.appointmentId.isEmpty()) sb.append("\nMã lượt khám: ").append(m.appointmentId);
+            sb.append("\n\nTHÔNG TIN THUỐC\n")
+                    .append("Tên thuốc: ").append(m.name)
+                    .append("\nLiều dùng: ").append(m.dose.isEmpty() ? m.dosage : m.dose)
+                    .append("\nLịch uống: ").append(m.schedule.isEmpty() ? m.timeLabel : m.schedule);
+            if (!m.days.isEmpty()) sb.append("\nSố ngày: ").append(m.days);
+            if (!m.quantity.isEmpty()) sb.append("\nSố lượng: ").append(m.quantity).append(" ").append(m.unit);
+            if (m.unitPriceVnd >= 0) sb.append("\nĐơn giá: ").append(PriceText.vnd(m.unitPriceVnd));
+            if (m.lineTotalVnd >= 0) sb.append("\nThành tiền: ").append(PriceText.vnd(m.lineTotalVnd));
+            if (!m.instruction.isEmpty()) sb.append("\nHướng dẫn: ").append(m.instruction);
+            if (!m.notes.isEmpty()) sb.append("\n\nDẶN DÒ SAU KHÁM\n").append(m.notes);
+            if (!m.orderStatus.isEmpty()) sb.append("\n\n").append(m.orderStatus);
+        } else {
+            sb.append("Tên thuốc: ").append(m.name)
+                    .append("\nLiều dùng: ").append(m.dosage)
+                    .append("\nThời điểm: ").append(m.timeLabel)
+                    .append("\nTần suất: ").append(m.frequency);
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("Chi tiết thuốc")
+                .setMessage(sb.toString())
+                .setPositiveButton("Đóng", null)
+                .show();
     }
 
     private void showEditDialog(DocumentSnapshot document) {

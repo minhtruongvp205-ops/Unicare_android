@@ -19,6 +19,8 @@
         android:layout_gravity="bottom"
         android:background="#FFFFFF"
         app:elevation="8dp"
+        app:labelVisibilityMode="labeled"
+        app:itemHorizontalTranslationEnabled="false"
         app:itemIconTint="@color/bnv_selector"
         app:itemTextColor="@color/bnv_selector"
         app:menu="@menu/bottom_nav_menu" />

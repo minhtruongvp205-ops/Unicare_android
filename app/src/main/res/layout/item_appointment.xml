@@ -6,11 +6,7 @@
         <!-- Title row with status badge -->
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
 
-            <LinearLayout android:layout_width="40dp" android:layout_height="40dp" android:background="@drawable/bg_icon_circle_blue" android:gravity="center">
-                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_calendar" android:contentDescription="Lịch khám"/>
-            </LinearLayout>
-
-            <TextView android:id="@+id/txtTitle" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:textColor="#1A1A2E" android:textSize="16sp" android:textStyle="bold" android:maxLines="2" android:ellipsize="end"/>
+            <TextView android:id="@+id/txtTitle" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textColor="#1A1A2E" android:textSize="16sp" android:textStyle="bold" android:maxLines="2" android:ellipsize="end"/>
 
             <TextView android:id="@+id/txtStatus" android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/bg_badge_amber" android:paddingHorizontal="10dp" android:paddingVertical="4dp" android:textColor="#F59E0B" android:textSize="12sp" android:textStyle="bold"/>
         </LinearLayout>

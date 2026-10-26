@@ -8,45 +8,56 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.btl_android.model.Prescription.MedicationItem;
-
 import java.util.List;
+import java.util.Map;
 
-public class PaymentItemAdapter extends RecyclerView.Adapter<PaymentItemAdapter.ViewHolder> {
+/** Hiển thị các thuốc trong treatment_plans.items mà bác sĩ đã kê. */
+public class PaymentItemAdapter extends RecyclerView.Adapter<PaymentItemAdapter.Holder> {
+    private final List<Map<String, Object>> items;
 
-    private final List<MedicationItem> items;
-
-    public PaymentItemAdapter(List<MedicationItem> items) {
+    public PaymentItemAdapter(List<Map<String, Object>> items) {
         this.items = items;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(android.R.layout.simple_list_item_2, parent, false);
-        return new ViewHolder(view);
+    public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View row = LayoutInflater.from(parent.getContext())
+                .inflate(android.R.layout.simple_list_item_2, parent, false);
+        return new Holder(row);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        MedicationItem item = items.get(position);
-        holder.text1.setText(item.name + " (" + item.dosage + ")");
-        holder.text2.setText(item.price + " ₫");
+    public void onBindViewHolder(@NonNull Holder holder, int position) {
+        Map<String, Object> m = items.get(position);
+        String name = str(m.get("name"));
+        String unit = str(m.get("unit"));
+        long quantity = number(m.get("quantity"));
+        long price = number(m.get("unitPriceVnd"));
+        long lineTotal = number(m.get("lineTotalVnd"));
+        holder.title.setText(name + "  •  SL: " + quantity + " " + unit);
+        holder.subtitle.setText("Đơn giá " + PriceText.vnd(price)
+                + "  →  " + PriceText.vnd(lineTotal)
+                + "\nLiều: " + str(m.get("dose")) + " • " + str(m.get("schedule")));
+        holder.subtitle.setMaxLines(3);
     }
 
-    @Override
-    public int getItemCount() {
-        return items.size();
+    @Override public int getItemCount() { return items.size(); }
+
+    private static long number(Object value) {
+        return value instanceof Number ? ((Number) value).longValue() : 0;
+    }
+    private static String str(Object value) {
+        return value == null ? "" : value.toString();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView text1;
-        TextView text2;
-
-        ViewHolder(View itemView) {
-            super(itemView);
-            text1 = itemView.findViewById(android.R.id.text1);
-            text2 = itemView.findViewById(android.R.id.text2);
+    static class Holder extends RecyclerView.ViewHolder {
+        final TextView title;
+        final TextView subtitle;
+        Holder(View view) {
+            super(view);
+            title = view.findViewById(android.R.id.text1);
+            subtitle = view.findViewById(android.R.id.text2);
         }
     }
 }

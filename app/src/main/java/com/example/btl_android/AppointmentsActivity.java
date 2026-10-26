@@ -214,13 +214,13 @@ public class AppointmentsActivity extends AppCompatActivity {
     private String status(String s) {
         switch (s) {
             case "PENDING":
-                return "⏳ Chờ xác nhận";
+                return "Chờ xác nhận";
             case "CONFIRMED":
-                return "✅ Đã xác nhận";
+                return "Đã xác nhận";
             case "CANCELLED":
-                return "❌ Đã hủy";
+                return "Đã hủy";
             case "COMPLETED":
-                return "🏥 Đã khám";
+                return "Đã khám";
             default:
                 return s;
         }
@@ -271,9 +271,9 @@ public class AppointmentsActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull Holder h, int p) {
             DocumentSnapshot d = filtered.get(p);
             String st = App.str(d, "status");
-            h.title.setText(role.equals("doctor") ? "🧑‍⚕️  " + App.str(d, "patientName")
-                    : "👨‍⚕️  BS. " + App.str(d, "doctorName"));
-            h.info.setText("🏥  " + App.str(d, "specialty") + "\n📅  " + App.date(d.getTimestamp("startAt")) + "\n📝  "
+            h.title.setText(role.equals("doctor") ? App.str(d, "patientName")
+                    : "BS. " + App.str(d, "doctorName"));
+            h.info.setText(App.str(d, "specialty") + "\n" + App.date(d.getTimestamp("startAt")) + "\n"
                     + App.str(d, "reason"));
             h.statusTv.setText(status(st));
             h.statusTv.setTextColor(statusColor(st));
@@ -289,11 +289,11 @@ public class AppointmentsActivity extends AppCompatActivity {
                 if (st.equals("PENDING")) {
                     // Xác nhận
                     h.primary.setVisibility(View.VISIBLE);
-                    h.primary.setText("✅ Xác nhận");
+                    h.primary.setText("Xác nhận");
                     h.primary.setOnClickListener(v -> changeStatus(d, "CONFIRMED"));
                     // Từ chối
                     h.secondary.setVisibility(View.VISIBLE);
-                    h.secondary.setText("❌ Từ chối");
+                    h.secondary.setText("Từ chối");
                     h.secondary.setOnClickListener(v -> new android.app.AlertDialog.Builder(AppointmentsActivity.this)
                             .setTitle("Từ chối lịch khám")
                             .setMessage("Từ chối lịch khám của " + App.str(d, "patientName") + "?")
@@ -302,19 +302,19 @@ public class AppointmentsActivity extends AppCompatActivity {
                 } else if (st.equals("CONFIRMED")) {
                     // Lưu bệnh án + đơn thuốc + kết thúc cuộc khám trong MỘT màn hình.
                     h.primary.setVisibility(View.VISIBLE);
-                    h.primary.setText("🩺 Bắt đầu khám");
+                    h.primary.setText("Bắt đầu khám");
                     h.primary.setOnClickListener(v -> openRecord(d));
                     // Không cho đánh dấu hoàn thành trước khi nhập kết quả khám.
                 } else if (st.equals("COMPLETED")) {
                     h.primary.setVisibility(View.VISIBLE);
-                    h.primary.setText("📋 Xem / sửa phiếu khám");
+                    h.primary.setText("Xem / sửa phiếu khám");
                     h.primary.setOnClickListener(v -> openRecord(d));
                 }
             } else {
                 // PATIENT
                 if (st.equals("PENDING") || st.equals("CONFIRMED")) {
                     h.secondary.setVisibility(View.VISIBLE);
-                    h.secondary.setText("🚫 Hủy lịch");
+                    h.secondary.setText("Hủy lịch");
                     h.secondary.setOnClickListener(v -> new android.app.AlertDialog.Builder(AppointmentsActivity.this)
                             .setTitle("Hủy lịch khám")
                             .setMessage("Bạn muốn hủy lịch khám này?")
@@ -323,13 +323,13 @@ public class AppointmentsActivity extends AppCompatActivity {
                 }
                 if (st.equals("COMPLETED")) {
                     h.primary.setVisibility(View.VISIBLE);
-                    h.primary.setText("📄 Xem bệnh án");
+                    h.primary.setText("Xem bệnh án");
                     h.primary.setOnClickListener(
                             v -> startActivity(new Intent(AppointmentsActivity.this, RecordsActivity.class)));
                     Boolean rated = d.getBoolean("rated");
                     if (!Boolean.TRUE.equals(rated)) {
                         h.secondary.setVisibility(View.VISIBLE);
-                        h.secondary.setText("⭐ Đánh giá");
+                        h.secondary.setText("Đánh giá");
                         h.secondary.setOnClickListener(v -> {
                             Intent ri = new Intent(AppointmentsActivity.this, RatingActivity.class);
                             ri.putExtra("appointmentId", d.getId());

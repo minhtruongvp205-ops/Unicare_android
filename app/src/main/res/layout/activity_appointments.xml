@@ -21,13 +21,13 @@
 
             <TextView android:id="@+id/tabAll" android:layout_width="wrap_content" android:layout_height="36dp" android:gravity="center" android:paddingHorizontal="16dp" android:text="Tất cả" android:textSize="13sp" android:textColor="#FFFFFF" android:textStyle="bold" android:background="@drawable/bg_icon_circle_blue" android:layout_marginHorizontal="4dp"/>
 
-            <TextView android:id="@+id/tabPending" android:layout_width="wrap_content" android:layout_height="36dp" android:gravity="center" android:paddingHorizontal="14dp" android:text="⏳ Chờ duyệt" android:textSize="13sp" android:textColor="#6B7280" android:layout_marginHorizontal="4dp"/>
+            <TextView android:id="@+id/tabPending" android:layout_width="wrap_content" android:layout_height="36dp" android:gravity="center" android:paddingHorizontal="14dp" android:text="Chờ duyệt" android:textSize="13sp" android:textColor="#6B7280" android:layout_marginHorizontal="4dp"/>
 
-            <TextView android:id="@+id/tabConfirmed" android:layout_width="wrap_content" android:layout_height="36dp" android:gravity="center" android:paddingHorizontal="14dp" android:text="✅ Đã xác nhận" android:textSize="13sp" android:textColor="#6B7280" android:layout_marginHorizontal="4dp"/>
+            <TextView android:id="@+id/tabConfirmed" android:layout_width="wrap_content" android:layout_height="36dp" android:gravity="center" android:paddingHorizontal="14dp" android:text="Đã xác nhận" android:textSize="13sp" android:textColor="#6B7280" android:layout_marginHorizontal="4dp"/>
 
-            <TextView android:id="@+id/tabCompleted" android:layout_width="wrap_content" android:layout_height="36dp" android:gravity="center" android:paddingHorizontal="14dp" android:text="🏥 Đã khám" android:textSize="13sp" android:textColor="#6B7280" android:layout_marginHorizontal="4dp"/>
+            <TextView android:id="@+id/tabCompleted" android:layout_width="wrap_content" android:layout_height="36dp" android:gravity="center" android:paddingHorizontal="14dp" android:text="Đã khám" android:textSize="13sp" android:textColor="#6B7280" android:layout_marginHorizontal="4dp"/>
 
-            <TextView android:id="@+id/tabCancelled" android:layout_width="wrap_content" android:layout_height="36dp" android:gravity="center" android:paddingHorizontal="14dp" android:text="❌ Đã hủy" android:textSize="13sp" android:textColor="#6B7280" android:layout_marginHorizontal="4dp"/>
+            <TextView android:id="@+id/tabCancelled" android:layout_width="wrap_content" android:layout_height="36dp" android:gravity="center" android:paddingHorizontal="14dp" android:text="Đã hủy" android:textSize="13sp" android:textColor="#6B7280" android:layout_marginHorizontal="4dp"/>
         </LinearLayout>
     </HorizontalScrollView>
 

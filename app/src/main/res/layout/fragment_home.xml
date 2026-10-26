@@ -78,19 +78,12 @@
                     android:gravity="center_vertical">
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:text="Chức năng"
                         android:textColor="#1A1A2E"
                         android:textSize="16sp"
                         android:textStyle="bold" />
-
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_search"
-                        app:tint="#0D6EFD"/>
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView

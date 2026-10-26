@@ -3,77 +3,137 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:background="#F0F4FF">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Thanh toán"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="16dp"/>
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="@drawable/gradient_header"
+        android:padding="12dp">
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_icon_circle_blue"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="Quay lại"
+            android:padding="10dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:text="Thanh toán đơn thuốc"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvPaymentItems"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
-
-    <TextView
-        android:id="@+id/tvTotalAmount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"/>
-
-    <EditText
-        android:id="@+id/etAddress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Địa chỉ giao hàng"
-        android:inputType="textPostalAddress"
-        android:layout_marginBottom="16dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Phương thức thanh toán"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <RadioGroup
-        android:id="@+id/rgPaymentMethod"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp">
-
-        <RadioButton
-            android:id="@+id/rbCash"
-            android:layout_width="wrap_content"
+        android:layout_weight="1"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tiền mặt"
-            android:checked="true"/>
+            android:padding="16dp"
+            android:orientation="vertical">
 
-        <RadioButton
-            android:id="@+id/rbCard"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Thẻ tín dụng"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Chọn đơn thuốc đã được bác sĩ kê"
+                android:textColor="#172544"
+                android:textStyle="bold"
+                android:textSize="16sp" />
+            <Spinner
+                android:id="@+id/spinnerPrescriptions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:minHeight="48dp" />
+            <TextView
+                android:id="@+id/tvPaymentStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Đang tải đơn thuốc..."
+                android:textColor="#64748B"
+                android:textSize="14sp" />
 
-        <RadioButton
-            android:id="@+id/rbWallet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ví điện tử"/>
-    </RadioGroup>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPaymentItems"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:nestedScrollingEnabled="false" />
+
+            <TextView
+                android:id="@+id/tvTotalAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Tổng tiền thuốc dự kiến: 0 đ"
+                android:textColor="#0965EF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Đây là số tiền theo đơn bác sĩ; chưa xác nhận là số tiền đã thu."
+                android:textColor="#64748B"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/etAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="Địa chỉ nhận thuốc"
+                android:inputType="textPostalAddress"
+                android:minHeight="48dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="18dp"
+                android:text="Phương thức thanh toán"
+                android:textColor="#172544"
+                android:textStyle="bold" />
+            <RadioGroup
+                android:id="@+id/rgPaymentMethod"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <RadioButton
+                    android:id="@+id/rbCash"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:text="Tiền mặt khi nhận thuốc" />
+                <RadioButton
+                    android:id="@+id/rbCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Thẻ tín dụng (chưa hỗ trợ)" />
+                <RadioButton
+                    android:id="@+id/rbWallet"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ví điện tử (chưa hỗ trợ)" />
+            </RadioGroup>
+        </LinearLayout>
+    </ScrollView>
 
     <Button
         android:id="@+id/btnConfirmPayment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Xác nhận thanh toán"/>
-
+        android:layout_margin="16dp"
+        android:enabled="false"
+        android:text="Tạo phiếu yêu cầu thanh toán" />
 </LinearLayout>
