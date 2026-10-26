@@ -53,6 +53,8 @@
         <item name="boxCornerRadiusTopStart">12dp</item>
         <item name="boxStrokeColor">#CBD5F5</item>
         <item name="hintTextColor">#6B7280</item>
+        <item name="endIconTint">#6B7280</item>
+        <item name="passwordToggleTint">#6B7280</item>
     </style>
 
     <style name="Theme.UniCare.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
