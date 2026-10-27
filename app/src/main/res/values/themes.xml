@@ -22,6 +22,21 @@
         <!-- Text fields -->
         <item name="materialButtonStyle">@style/Widget.UniCare.Button</item>
         <item name="textInputStyle">@style/Widget.UniCare.TextInputLayout</item>
+        <!-- Date & Time picker dialog themes -->
+        <item name="android:datePickerDialogTheme">@style/CalendarDialogTheme</item>
+        <item name="android:timePickerDialogTheme">@style/CalendarDialogTheme</item>
+    </style>
+
+    <style name="CalendarDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="colorPrimary">#0D6EFD</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorSurface">#FFFFFF</item>
+        <item name="colorOnSurface">#1A1A2E</item>
+        <item name="android:textColorPrimary">#1A1A2E</item>
+        <item name="android:textColorSecondary">#6B7280</item>
+        <item name="android:textColorPrimaryDisableOnly">#9CA3AF</item>
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">@drawable/bg_dialog_rounded</item>
     </style>
 
     <style name="Widget.UniCare.Button" parent="Widget.MaterialComponents.Button">

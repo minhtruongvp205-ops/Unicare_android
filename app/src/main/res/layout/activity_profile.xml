@@ -100,12 +100,14 @@
                         android:text="email@example.com"
                         android:textColor="#1A1A2E"
                         android:textSize="15sp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         android:textStyle="bold"/>
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="10dp"
                         android:background="@drawable/bg_badge_green"
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="3dp">
@@ -158,6 +160,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
+                        android:gravity="center_vertical"
+                        android:textColor="#1A1A2E"
                         android:minHeight="52dp"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -172,46 +176,54 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="phone"
+                        android:gravity="center_vertical"
+                        android:textColor="#1A1A2E"
                         android:minHeight="52dp"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="0dp"
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilDob"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginTop="12dp"
-                        android:layout_marginEnd="6dp"
-                        android:hint="Ngày sinh (dd/MM/yyyy)"
+                        android:hint="Ngày sinh"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@drawable/ic_calendar"
                         style="@style/Widget.UniCare.TextInputLayout">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtDob"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="text"
+                            android:focusable="false"
+                            android:clickable="true"
+                            android:cursorVisible="false"
+                            android:inputType="none"
+                            android:gravity="center_vertical"
+                            android:textColor="#1A1A2E"
                             android:minHeight="52dp"/>
-                    </com.google.android.material.textfield.TextInputLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="0dp"
+                <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilGender"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:layout_marginTop="12dp"
-                        android:layout_marginStart="6dp"
                         android:hint="Giới tính"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@drawable/ic_dropdown"
                         style="@style/Widget.UniCare.TextInputLayout">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/edtGender"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="text"
+                            android:focusable="false"
+                            android:clickable="true"
+                            android:cursorVisible="false"
+                            android:inputType="none"
+                            android:gravity="center_vertical"
+                            android:textColor="#1A1A2E"
                             android:minHeight="52dp"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -224,6 +236,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="text"
+                        android:gravity="center_vertical"
+                        android:textColor="#1A1A2E"
                         android:minHeight="52dp"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
@@ -274,6 +288,7 @@
                         android:inputType="textMultiLine"
                         android:lines="3"
                         android:gravity="top"
+                        android:textColor="#1A1A2E"
                         android:minHeight="52dp"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>

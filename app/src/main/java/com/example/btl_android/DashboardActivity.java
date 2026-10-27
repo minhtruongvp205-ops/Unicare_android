@@ -29,6 +29,15 @@ public class DashboardActivity extends AppCompatActivity {
                 v -> startActivity(new Intent(this, ProfileActivity.class)));
         findViewById(R.id.btnLogout).setOnClickListener(
                 v -> App.logout(this));
+
+        View btnNotices = findViewById(R.id.btnNotices);
+        if (btnNotices != null) {
+            btnNotices.setOnClickListener(v -> {
+                Intent i = new Intent(this, AppointmentsActivity.class);
+                i.putExtra("notices", true);
+                startActivity(i);
+            });
+        }
     }
 
     @Override
@@ -91,16 +100,6 @@ public class DashboardActivity extends AppCompatActivity {
         safeClick(R.id.btnHealthVitals, HealthVitalsActivity.class);
         safeClick(R.id.btnMedication, MedicationActivity.class);
         safeClick(R.id.btnRecords, RecordsActivity.class);
-
-        // Notifications
-        View btnNotices = findViewById(R.id.btnNotices);
-        if (btnNotices != null) {
-            btnNotices.setOnClickListener(v -> {
-                Intent i = new Intent(this, AppointmentsActivity.class);
-                i.putExtra("notices", true);
-                startActivity(i);
-            });
-        }
     }
 
     /** Realtime stats cho bệnh nhân: đếm lịch khám, thuốc, chỉ số */
