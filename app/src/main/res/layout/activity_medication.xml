@@ -35,7 +35,7 @@
     <!-- Tab row: Sáng / Trưa / Tối / Tất cả -->
     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginHorizontal="16dp" android:layout_marginTop="12dp" android:background="@drawable/bg_card_modern" android:orientation="horizontal" android:padding="4dp" android:id="@+id/sectionLayout3" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@id/sectionLayout2">
 
-        <TextView android:id="@+id/tabAll" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:gravity="center" android:text="Tất cả" android:textSize="13sp" android:textColor="#0D6EFD" android:background="@drawable/bg_icon_circle_blue" android:textStyle="bold"/>
+        <TextView android:id="@+id/tabAll" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:gravity="center" android:text="Tất cả" android:textSize="13sp" android:textColor="#FFFFFF" android:background="@drawable/bg_icon_circle_blue" android:textStyle="bold"/>
 
         <TextView android:id="@+id/tabMorning" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:gravity="center" android:text="☀️ Sáng" android:textSize="13sp" android:textColor="#6B7280"/>
 

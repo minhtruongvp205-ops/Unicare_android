@@ -191,9 +191,11 @@ public class MedicationActivity extends AppCompatActivity {
                 TextView t = findViewById(id);
                 t.setTextColor(0xFF6B7280);
                 t.setBackgroundResource(0);
+                t.setTypeface(null, android.graphics.Typeface.NORMAL);
             }
-            tab.setTextColor(0xFF0D6EFD);
+            tab.setTextColor(0xFFFFFFFF);
             tab.setBackgroundResource(R.drawable.bg_icon_circle_blue);
+            tab.setTypeface(null, android.graphics.Typeface.BOLD);
         });
     }
 
