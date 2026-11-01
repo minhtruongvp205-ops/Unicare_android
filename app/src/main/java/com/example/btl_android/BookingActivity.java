@@ -1,11 +1,15 @@
 package com.example.btl_android;
 
-import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointForward;
+import java.util.TimeZone;
 import android.widget.Spinner;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,8 +37,9 @@ public class BookingActivity extends AppCompatActivity {
     private boolean dateChosen=false,timeChosen=false;
     private Spinner doctorSpinner;
     private TextView when, message;
-    private EditText reason;
-    private Button submit;
+    private TextInputEditText reason;
+    private TextInputLayout tilReason;
+    private MaterialButton submit;
     @Override protected void onCreate(Bundle b){
         super.onCreate(b); App.requireLogin(this); if(App.user()==null) return;
         setContentView(R.layout.activity_booking); App.applyInsets(this);
@@ -42,15 +47,9 @@ public class BookingActivity extends AppCompatActivity {
         doctorSpinner=findViewById(R.id.spinnerDoctors);
         when=findViewById(R.id.txtWhen); message=findViewById(R.id.txtMessage);
         reason=findViewById(R.id.edtReason); submit=findViewById(R.id.btnBookNow);
+        tilReason=findViewById(R.id.tilReason);
         submit.setEnabled(false);
-        findViewById(R.id.btnChooseDate).setOnClickListener(v -> {
-            Calendar now=Calendar.getInstance();
-            DatePickerDialog dlg=new DatePickerDialog(this,(picker,y,m,d)->{
-                selected.set(Calendar.YEAR,y); selected.set(Calendar.MONTH,m); selected.set(Calendar.DAY_OF_MONTH,d);
-                dateChosen=true; updateDateLabel();
-            },now.get(Calendar.YEAR),now.get(Calendar.MONTH),now.get(Calendar.DAY_OF_MONTH));
-            dlg.getDatePicker().setMinDate(System.currentTimeMillis()-1000); dlg.show();
-        });
+        findViewById(R.id.btnChooseDate).setOnClickListener(v -> showDatePickerDialog());
         findViewById(R.id.btnChooseTime).setOnClickListener(v -> {
             Calendar now=Calendar.getInstance();
             new TimePickerDialog(this,(picker,h,m)->{
@@ -64,6 +63,44 @@ public class BookingActivity extends AppCompatActivity {
             loadDoctors();
         });
     }
+    // Mẫu MaterialDatePicker của thầy; chuyển đúng ngày UTC sang Calendar địa phương.
+    private void showDatePickerDialog() {
+        CalendarConstraints constraints = new CalendarConstraints.Builder()
+                .setValidator(DateValidatorPointForward.now()).build();
+        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                .setTitleText("Chọn ngày khám")
+                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
+                .setCalendarConstraints(constraints).build();
+        datePicker.addOnPositiveButtonClickListener(value -> {
+            Calendar utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            utc.setTimeInMillis(value);
+            selected.set(Calendar.YEAR, utc.get(Calendar.YEAR));
+            selected.set(Calendar.MONTH, utc.get(Calendar.MONTH));
+            selected.set(Calendar.DAY_OF_MONTH, utc.get(Calendar.DAY_OF_MONTH));
+            dateChosen = true;
+            updateDateLabel();
+        });
+        datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
+    }
+
+    private boolean validateData() {
+        tilReason.setError(null);
+        if (doctors.isEmpty() || doctorSpinner.getSelectedItemPosition() < 0
+                || !dateChosen || !timeChosen) {
+            App.note(this, "Chọn bác sĩ, ngày và giờ khám");
+            return false;
+        }
+        if (selected.getTimeInMillis() < System.currentTimeMillis() + 5 * 60_000) {
+            App.note(this, "Giờ khám phải cách hiện tại ít nhất 5 phút");
+            return false;
+        }
+        if (App.value(reason).length() < 3) {
+            tilReason.setError("Vui lòng nhập lý do khám (ít nhất 3 ký tự)");
+            return false;
+        }
+        return true;
+    }
+
     private void updateDateLabel(){
         when.setText((dateChosen?new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(selected.getTime()):"Chưa chọn ngày")+" • "+(timeChosen?new SimpleDateFormat("HH:mm",Locale.getDefault()).format(selected.getTime()):"Chưa chọn giờ"));
     }
@@ -79,10 +116,8 @@ public class BookingActivity extends AppCompatActivity {
         }).addOnFailureListener(e -> message.setText("Không tải được danh sách bác sĩ: "+e.getLocalizedMessage()));
     }
     private void book(){
-        if (doctors.isEmpty() || !dateChosen || !timeChosen){App.note(this,"Chọn bác sĩ, ngày và giờ khám");return;}
-        if(selected.getTimeInMillis() < System.currentTimeMillis()+5*60_000){App.note(this,"Giờ khám phải cách thời điểm hiện tại ít nhất 5 phút");return;}
-        String why=App.value(reason);
-        if(why.length()<3){reason.setError("Nhập lý do khám");return;}
+        if (!validateData()) return;
+        String why = App.value(reason);
         DoctorOption doc=doctors.get(doctorSpinner.getSelectedItemPosition());
         submit.setEnabled(false);
         App.db().collection("users").document(App.uid()).get().addOnSuccessListener(profile -> {
