@@ -88,7 +88,7 @@ public class AuthActivity extends AppCompatActivity {
                 .addOnSuccessListener(result -> openByRole())
                 .addOnFailureListener(error -> {
                     busy(false);
-                    txtMessage.setText("Đăng nhập thất bại: " + error.getLocalizedMessage());
+                    txtMessage.setText("Đăng nhập thất bại: Tài khoản hoặc mật khẩu không chính xác.");
                 });
     }
 

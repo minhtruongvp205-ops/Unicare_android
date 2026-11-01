@@ -2,7 +2,9 @@ package com.example.btl_android;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -16,7 +18,13 @@ public class DashboardActivity extends AppCompatActivity {
         App.requireLogin(this);
         if (App.user() == null) return;
         setContentView(R.layout.activity_dashboard);
-        App.applyInsets(this);
+
+        // Áp dụng top inset (status bar) cho fragment_container để không bị che mất logo trên cùng
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.fragment_container), (v, windowInsets) -> {
+            androidx.core.graphics.Insets bars = windowInsets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars());
+            v.setPadding(0, bars.top, 0, v.getPaddingBottom());
+            return windowInsets;
+        });
 
         BottomNavigationView navView = findViewById(R.id.bottom_navigation);
 
