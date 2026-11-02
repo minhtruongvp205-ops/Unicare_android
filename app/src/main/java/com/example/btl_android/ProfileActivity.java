@@ -12,13 +12,16 @@ import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import android.widget.TextView;
+import android.widget.AutoCompleteTextView;
+import android.widget.ArrayAdapter;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.firestore.FieldValue;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
-    TextInputEditText name,phone,dob,gender,address,history;
+    TextInputEditText name,phone,dob,address,history;
+    AutoCompleteTextView gender;
     TextInputLayout tilName,tilPhone,tilDob;
     MaterialButton save;
     TextView message;
@@ -33,6 +36,11 @@ public class ProfileActivity extends AppCompatActivity {
         name=findViewById(R.id.edtName);phone=findViewById(R.id.edtPhone); dob=findViewById(R.id.edtDob);
         gender=findViewById(R.id.edtGender);address=findViewById(R.id.edtAddress);
         history=findViewById(R.id.edtMedicalHistory);save=findViewById(R.id.btnSaveProfile);
+        
+        String[] genders = new String[] {"Nam", "Nữ", "Khác"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, genders);
+        gender.setAdapter(adapter);
+        
         MaterialButton logout=findViewById(R.id.btnLogout);
         logout.setOnClickListener(v -> App.logout(this));
         message=findViewById(R.id.txtMessage);
@@ -43,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
             role=App.str(d,"role");
             ((TextView)findViewById(R.id.txtRole)).setText("Vai trò: "+role);
             name.setText(App.str(d,"name"));phone.setText(App.str(d,"phone"));
-            dob.setText(App.str(d,"dob"));gender.setText(App.str(d,"gender"));
+            dob.setText(App.str(d,"dob"));gender.setText(App.str(d,"gender"), false);
             address.setText(App.str(d,"address"));history.setText(App.str(d,"medicalHistory"));
             save.setEnabled(true);
         }).addOnFailureListener(e->App.error(this,e));
@@ -90,7 +98,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void saveProfile(){
         Map<String,Object> changes=new HashMap<>();
         changes.put("name",App.value(name)); changes.put("phone",App.value(phone));
-        changes.put("dob",App.value(dob));changes.put("gender",App.value(gender));
+        changes.put("dob",App.value(dob));changes.put("gender",gender.getText().toString());
         changes.put("address",App.value(address));changes.put("medicalHistory",App.value(history));
         // No client can change their role by updating profile.
         save.setEnabled(false);
