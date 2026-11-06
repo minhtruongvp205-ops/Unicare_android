@@ -120,7 +120,7 @@ public class HomeFragment extends Fragment {
                 () -> startActivity(new Intent(getContext(), ContactActivity.class))));
         features.add(new Feature("Đăng xuất", R.drawable.ic_feature_logout, () -> {
             FirebaseAuth.getInstance().signOut();
-            Toast.makeText(getContext(), "Đăng xuất thành công", Toast.LENGTH_SHORT).show();
+            App.note(getContext(), "Đăng xuất thành công!");
             Intent intent = new Intent(getContext(), AuthActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -130,7 +130,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void showComingSoon() {
-        Toast.makeText(getContext(), "Tính năng đang phát triển", Toast.LENGTH_SHORT).show();
+        App.note(getContext(), "Tính năng đang phát triển");
     }
 
     // --- ADAPTERS ---

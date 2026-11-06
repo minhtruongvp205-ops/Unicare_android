@@ -103,7 +103,11 @@ public class ProfileActivity extends AppCompatActivity {
         // No client can change their role by updating profile.
         save.setEnabled(false);
         App.db().collection("users").document(App.uid()).update(changes)
-                .addOnSuccessListener(x->{save.setEnabled(true);message.setText("Đã lưu hồ sơ");})
+                .addOnSuccessListener(x -> {
+                    save.setEnabled(true);
+                    message.setText("Đã lưu hồ sơ");
+                    App.note(this, "Cập nhật hồ sơ cá nhân thành công!");
+                })
                 .addOnFailureListener(e->{save.setEnabled(true);App.error(this,e);});
     }
 }

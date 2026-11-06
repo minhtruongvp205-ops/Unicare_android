@@ -191,13 +191,13 @@ public class AppointmentsActivity extends AppCompatActivity {
         String current = App.str(d, "status");
         if (next.equals("CONFIRMED")) {
             ref.update("status", "CONFIRMED", "updatedAt", FieldValue.serverTimestamp())
-                    .addOnSuccessListener(x -> App.note(this, "Đã xác nhận lịch khám"))
+                    .addOnSuccessListener(x -> App.note(this, "Xác nhận lịch hẹn khám thành công!"))
                     .addOnFailureListener(e -> App.error(this, e));
             return;
         }
         if (next.equals("COMPLETED")) {
             ref.update("status", "COMPLETED", "updatedAt", FieldValue.serverTimestamp())
-                    .addOnSuccessListener(x -> App.note(this, "Đã đánh dấu hoàn thành"))
+                    .addOnSuccessListener(x -> App.note(this, "Hoàn thành lượt khám bệnh thành công!"))
                     .addOnFailureListener(e -> App.error(this, e));
             return;
         }
@@ -208,7 +208,9 @@ public class AppointmentsActivity extends AppCompatActivity {
         String slotId = App.str(d, "slotId");
         if (!slotId.isEmpty())
             batch.delete(App.db().collection("slots").document(slotId));
-        batch.commit().addOnFailureListener(e -> App.error(this, e));
+        batch.commit()
+                .addOnSuccessListener(x -> App.note(this, "Hủy lịch hẹn khám thành công!"))
+                .addOnFailureListener(e -> App.error(this, e));
     }
 
     private String status(String s) {

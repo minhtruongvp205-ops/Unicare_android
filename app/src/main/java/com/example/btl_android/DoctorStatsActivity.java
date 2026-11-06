@@ -138,7 +138,7 @@ public class DoctorStatsActivity extends AppCompatActivity {
 
     private void confirmAppointment(DocumentSnapshot d) {
         d.getReference().update("status", "CONFIRMED", "updatedAt", FieldValue.serverTimestamp())
-                .addOnSuccessListener(x -> App.note(this, "Đã xác nhận lịch khám"))
+                .addOnSuccessListener(x -> App.note(this, "Xác nhận lịch hẹn khám thành công!"))
                 .addOnFailureListener(e -> App.error(this, e));
     }
 
@@ -147,7 +147,7 @@ public class DoctorStatsActivity extends AppCompatActivity {
                 .setMessage("Từ chối lịch khám của " + d.getString("patientName") + "?")
                 .setPositiveButton("Từ chối", (dlg, w) ->
                         d.getReference().update("status", "CANCELLED", "updatedAt", FieldValue.serverTimestamp())
-                                .addOnSuccessListener(x -> App.note(this, "Đã từ chối"))
+                                .addOnSuccessListener(x -> App.note(this, "Từ chối lịch hẹn khám thành công!"))
                                 .addOnFailureListener(e -> App.error(this, e)))
                 .setNegativeButton("Không", null).show();
     }

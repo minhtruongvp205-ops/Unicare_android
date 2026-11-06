@@ -85,7 +85,10 @@ public class AuthActivity extends AppCompatActivity {
         txtMessage.setText("Đang đăng nhập...");
         FirebaseAuth.getInstance()
                 .signInWithEmailAndPassword(App.value(edtEmail), App.value(edtPassword))
-                .addOnSuccessListener(result -> openByRole())
+                .addOnSuccessListener(result -> {
+                    App.note(this, "Đăng nhập thành công!");
+                    openByRole();
+                })
                 .addOnFailureListener(error -> {
                     busy(false);
                     txtMessage.setText("Đăng nhập thất bại: " + error.getLocalizedMessage());

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Baseline axis -->
+    <path
+        android:strokeColor="#90A4AE"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M12,50 L52,50" />
+
+    <!-- Bar 1 (soft cyan) -->
+    <path
+        android:fillColor="#80DEEA"
+        android:pathData="M16,36 L22,36 C23.1,36 24,36.9 24,38 L24,49 L14,49 L14,38 C14,36.9 14.9,36 16,36 Z" />
+
+    <!-- Bar 2 (vibrant teal) -->
+    <path
+        android:fillColor="#00C4A7"
+        android:pathData="M27,26 L33,26 C34.1,26 35,26.9 35,28 L35,49 L25,49 L25,28 C25,26.9 25.9,26 27,26 Z" />
+
+    <!-- Bar 3 (medical blue) -->
+    <path
+        android:fillColor="#0288D1"
+        android:pathData="M38,18 L44,18 C45.1,18 46,18.9 46,20 L46,49 L36,49 L36,20 C36,18.9 36.9,18 38,18 Z" />
+
+    <!-- Upward growth line & arrow -->
+    <path
+        android:strokeColor="#FF7043"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M14,40 C22,34 30,28 44,14 M38,14 L44,14 L44,20" />
+
+    <!-- Golden rating star accent -->
+    <path
+        android:fillColor="#FFCA28"
+        android:pathData="M51,11 L52.2,14.5 L56,14.5 L53,16.5 L54.2,20 L51,18 L47.8,20 L49,16.5 L46,14.5 L49.8,14.5 Z" />
+</vector>
+

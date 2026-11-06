@@ -18,6 +18,15 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
         App.applyInsets(this);
 
+        // Xin quyền gửi thông báo trên Android 13+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
+                    != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                androidx.core.app.ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 1001);
+            }
+        }
+
         BottomNavigationView navView = findViewById(R.id.bottom_navigation);
 
         navView.setOnItemSelectedListener(item -> {
@@ -53,6 +62,7 @@ public class DashboardActivity extends AppCompatActivity {
                 .addOnSuccessListener(d -> {
                     if (!d.exists()) { App.note(this, "Không tìm thấy hồ sơ"); App.logout(this); return; }
                     userRole = App.str(d, "role");
+                    AppNotificationManager.startListening(this, App.uid(), userRole);
                     
                     Fragment current = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
                     if (userRole.equals("doctor")) {
@@ -64,6 +74,12 @@ public class DashboardActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> App.error(this, e));
+    }
+
+    @Override
+    protected void onDestroy() {
+        AppNotificationManager.stopListening();
+        super.onDestroy();
     }
     
     private void loadFragment(Fragment fragment) {

@@ -322,7 +322,7 @@ public class PaymentActivity extends AppCompatActivity {
         DocumentReference orderRef = App.db().collection("orders").document(appointmentId);
         orderRef.set(order).addOnSuccessListener(unused -> {
             creatingOrder = false;
-            Toast.makeText(this, "Đã tạo phiếu yêu cầu thanh toán", Toast.LENGTH_LONG).show();
+            App.note(this, "Tạo yêu cầu thanh toán viện phí thành công!");
             startActivity(new Intent(this, InvoiceActivity.class)
                     .putExtra(InvoiceActivity.EXTRA_ORDER_ID, appointmentId));
             finish();

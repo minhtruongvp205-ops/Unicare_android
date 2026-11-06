@@ -310,8 +310,7 @@ public class RecordEditorActivity extends AppCompatActivity {
                     legacyOnly = false;
                     txtLegacy.setVisibility(View.GONE);
                     refreshPrescription();
-                    App.note(this, "Đã thêm " + added
-                            + " loại thuốc. Nhấn từng thuốc hoặc 'Nhập liều' để kê đơn.");
+                    App.note(this, "Đã thêm " + added + " thuốc vào đơn thành công! Nhấn từng thuốc để nhập liều.");
                 })
                 .show();
     }
@@ -510,7 +509,7 @@ public class RecordEditorActivity extends AppCompatActivity {
             batch.update(appt, "status", "COMPLETED", "updatedAt", FieldValue.serverTimestamp());
         batch.commit()
                 .addOnSuccessListener(x -> {
-                    App.note(this, "Đã lưu phiếu khám, đơn thuốc và hoàn thành lượt khám.");
+                    App.note(this, "Lưu bệnh án, đơn thuốc và hoàn thành khám bệnh thành công!");
                     finish();
                 })
                 .addOnFailureListener(e -> {

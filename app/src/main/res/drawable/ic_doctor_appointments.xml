@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Calendar body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2"
+        android:pathData="M18,14 L46,14 C48.2,14 50,15.8 50,18 L50,46 C50,48.2 48.2,50 46,50 L18,50 C15.8,50 14,48.2 14,46 L14,18 C14,15.8 15.8,14 18,14 Z" />
+
+    <!-- Calendar blue header strip -->
+    <path
+        android:fillColor="#0288D1"
+        android:pathData="M18,14 L46,14 C48.2,14 50,15.8 50,18 L50,23 L14,23 L14,18 C14,15.8 15.8,14 18,14 Z" />
+
+    <!-- Calendar golden rings -->
+    <path
+        android:strokeColor="#FFA726"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M23,9 L23,16 M41,9 L41,16" />
+
+    <!-- Schedule rows inside calendar -->
+    <path
+        android:strokeColor="#90A4AE"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M21,30 L37,30 M21,36 L33,36 M21,42 L28,42" />
+
+    <!-- Teal checkmark / confirmation badge at bottom right -->
+    <path
+        android:fillColor="#00C4A7"
+        android:pathData="M35,45 A10,10 0 1,0 55,45 A10,10 0 1,0 35,45 Z" />
+
+    <!-- Crisp white checkmark -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M40,45.5 L43.5,49 L50,41.5" />
+</vector>
+
