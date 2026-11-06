@@ -49,6 +49,7 @@ public final class AppNotificationManager {
             channel.enableLights(true);
             channel.enableVibration(true);
             channel.setShowBadge(true);
+            channel.setSound(null, null);
             channel.setLockscreenVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
             NotificationManager manager = context.getSystemService(NotificationManager.class);
@@ -89,7 +90,7 @@ public final class AppNotificationManager {
                 .setContentText(message)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(message))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setDefaults(NotificationCompat.DEFAULT_ALL)
+                .setDefaults(0)
                 .setAutoCancel(true)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
@@ -164,7 +165,9 @@ public final class AppNotificationManager {
             // Nếu sự kiện quá cũ (trên 3 ngày), chỉ lưu cờ đã xem để không spam
             boolean isRecent = (now - eventDate.getTime()) <= maxAgeMillis;
 
-            String key = "notif_" + apptId + "_" + status;
+            // Sử dụng thêm eventTs (giây) vào key để nếu bác sĩ cập nhật lại (updatedAt thay đổi) 
+            // thì ứng dụng của bệnh nhân vẫn sẽ hiển thị lại thông báo mới.
+            String key = "notif_" + apptId + "_" + status + "_" + eventTs.getSeconds();
             if (prefs.getBoolean(key, false)) {
                 continue; // Đã thông báo rồi thì bỏ qua
             }
@@ -181,14 +184,14 @@ public final class AppNotificationManager {
             if ("patient".equals(role)) {
                 // Người bệnh nhận thông báo từ Bác sĩ
                 if ("COMPLETED".equals(status)) {
-                    // BÁC SĨ KHÁM XONG VÀ LƯU KẾT QUẢ
+                    // BÁC SĨ KHÁM XONG HOẶC SỬA LẠI PHIẾU KHÁM
                     Intent intent = new Intent(context, RecordsActivity.class);
                     showNotification(
                             context,
                             notifId,
-                            "🩺 Kết quả khám bệnh mới",
+                            "🩺 Cập nhật kết quả khám",
                             "Bác sĩ " + (doctorName.isEmpty() ? "phụ trách" : doctorName)
-                                    + " đã hoàn tất khám và lưu đơn thuốc cho bạn. Chạm để xem chi tiết.",
+                                    + " đã cập nhật kết quả khám và đơn thuốc cho bạn. Chạm để xem chi tiết.",
                             intent
                     );
                 } else if ("CONFIRMED".equals(status)) {
