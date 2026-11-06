@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Wireless waves above roof -->
+    <path
+        android:strokeColor="#00ACC1"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M26,11 C28.5,9 31.5,9 34,11 M22,7 C26.5,3.5 33.5,3.5 38,7" />
+
+    <!-- Chimney -->
+    <path
+        android:strokeColor="#546E7A"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M39,18 L39,23" />
+
+    <!-- House body -->
+    <path
+        android:fillColor="#F0F8FF"
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2"
+        android:pathData="M18,29 L18,48 C18,50 19.5,51.5 21.5,51.5 L40,51.5 L40,29 Z" />
+
+    <!-- Roof -->
+    <path
+        android:strokeColor="#546E7A"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M13,29 L30,16 L47,29" />
+
+    <!-- Heart inside the house -->
+    <path
+        android:fillColor="#FF5252"
+        android:pathData="M30,44 C30,44 23,39.5 23,35 C23,33 24.5,31.5 26.5,31.5 C28,31.5 29.3,32.3 30,33.5 C30.7,32.3 32,31.5 33.5,31.5 C35.5,31.5 37,33 37,35 C37,39.5 30,44 30,44 Z" />
+
+    <!-- Pulse badge at bottom right -->
+    <path
+        android:fillColor="#26A69A"
+        android:pathData="M35,47 A8.5,8.5 0 1,0 52,47 A8.5,8.5 0 1,0 35,47 Z" />
+
+    <!-- Pulse wave inside badge -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M37,47 L40,47 L41.5,44 L43.5,50 L45,46 L49,47" />
+</vector>
+

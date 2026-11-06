@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Folder back tab -->
+    <path
+        android:fillColor="#1976D2"
+        android:pathData="M14,24 L14,18 C14,16.5 15.5,15 17,15 L26,15 C28,15 29.5,16.5 30.5,18 L32,24 Z" />
+
+    <!-- Document behind (yellow/amber sheet) -->
+    <path
+        android:fillColor="#FFE082"
+        android:strokeColor="#FFA726"
+        android:strokeWidth="1.5"
+        android:pathData="M24,12 L46,12 C47.5,12 49,13.5 49,15 L49,28 L24,28 Z" />
+    <path
+        android:strokeColor="#FFB74D"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M28,17 L44,17 M28,21 L38,21" />
+
+    <!-- Document in front (white sheet) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#90CAF9"
+        android:strokeWidth="1.5"
+        android:pathData="M18,17 L40,17 C41.5,17 43,18.5 43,20 L43,30 L18,30 Z" />
+    <path
+        android:strokeColor="#BBDEFB"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M22,22 L36,22 M22,26 L30,26" />
+
+    <!-- Orange arrow (history flow) -->
+    <path
+        android:strokeColor="#FF7043"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M26,10 L38,10 M34,6 L38,10 L34,14" />
+
+    <!-- Folder front body -->
+    <path
+        android:fillColor="#42A5F5"
+        android:strokeColor="#1E88E5"
+        android:strokeWidth="2"
+        android:pathData="M13,24 L51,24 C53,24 54.5,25.5 54.5,27.5 L52,49 C51.8,51 50,52.5 48,52.5 L16,52.5 C14,52.5 12.2,51 12,49 L9.5,27.5 C9.5,25.5 11,24 13,24 Z" />
+
+    <!-- Medical cross badge on folder -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M27,38 A5,5 0 1,0 37,38 A5,5 0 1,0 27,38 Z" />
+    <path
+        android:fillColor="#FFA726"
+        android:pathData="M31,34.5 L33,34.5 L33,37 L35.5,37 L35.5,39 L33,39 L33,41.5 L31,41.5 L31,39 L28.5,39 L28.5,37 L31,37 Z" />
+</vector>
+

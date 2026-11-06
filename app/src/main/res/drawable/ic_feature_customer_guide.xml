@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Heart background fill -->
+    <path
+        android:fillColor="#E1F5FE"
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M32,49 C32,49 14,38 14,26.5 C14,20.5 18.5,16 24.5,16 C28,16 30.5,18 32,20.5 C33.5,18 36,16 39.5,16 C45.5,16 50,20.5 50,26.5 C50,38 32,49 32,49 Z" />
+
+    <!-- Pulse wave (ECG heartbeat) line crossing through the heart -->
+    <path
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M11,32 L22,32 L25,37 L29,21 L33,43 L37,27 L40,32 L53,32" />
+</vector>
+

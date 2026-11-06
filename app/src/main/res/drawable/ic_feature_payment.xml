@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Payment card body -->
+    <path
+        android:fillColor="#E1F5FE"
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2"
+        android:pathData="M14,16 L48,16 C50.2,16 52,17.8 52,20 L52,38 C52,40.2 50.2,42 48,42 L14,42 C11.8,42 10,40.2 10,38 L10,20 C10,17.8 11.8,16 14,16 Z" />
+
+    <!-- Card magnetic stripe / design bar -->
+    <path
+        android:fillColor="#B3E5FC"
+        android:pathData="M10,21 L52,21 L52,25 L10,25 Z" />
+
+    <!-- Medical cross on card -->
+    <path
+        android:fillColor="#0288D1"
+        android:pathData="M16,29 L18,29 L18,31 L20,31 L20,33 L18,33 L18,35 L16,35 L16,33 L14,33 L14,31 L16,31 Z" />
+
+    <!-- Card EMV chip -->
+    <path
+        android:fillColor="#FFA726"
+        android:pathData="M23,30 L29,30 C29.5,30 30,30.5 30,31 L30,35 C30,35.5 29.5,36 29,36 L23,36 C22.5,36 22,35.5 22,35 L22,31 C22,30.5 22.5,30 23,30 Z" />
+
+    <!-- Card number lines -->
+    <path
+        android:strokeColor="#81D4FA"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:pathData="M33,33 L45,33" />
+
+    <!-- Stack of golden coins at bottom right -->
+    <!-- Coin 1 (bottom back) -->
+    <path
+        android:fillColor="#FFA000"
+        android:strokeColor="#FF8F00"
+        android:strokeWidth="1"
+        android:pathData="M40,43 C40,40.5 44.5,40.5 48,40.5 C51.5,40.5 56,40.5 56,43 L56,46 C56,48.5 51.5,48.5 48,48.5 C44.5,48.5 40,48.5 40,46 Z" />
+    <path
+        android:fillColor="#FFB300"
+        android:pathData="M40,43 C40,41 43.6,40.5 48,40.5 C52.4,40.5 56,41 56,43 C56,45 52.4,45.5 48,45.5 C43.6,45.5 40,45 40,43 Z" />
+
+    <!-- Coin 2 (front left) -->
+    <path
+        android:fillColor="#FF8F00"
+        android:pathData="M31,48 C31,45.5 35.5,45.5 39,45.5 C42.5,45.5 47,45.5 47,48 L47,52 C47,54.5 42.5,54.5 39,54.5 C35.5,54.5 31,54.5 31,52 Z" />
+    <path
+        android:fillColor="#FFCA28"
+        android:strokeColor="#FFA000"
+        android:strokeWidth="1"
+        android:pathData="M31,48 C31,46 34.6,45.5 39,45.5 C43.4,45.5 47,46 47,48 C47,50 43.4,50.5 39,50.5 C34.6,50.5 31,50 31,48 Z" />
+
+    <!-- Dollar / currency mark on top coin -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M38.5,47 L39.5,47 M39,46.5 L39,49.5"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"
+        android:strokeLineCap="round" />
+</vector>
+

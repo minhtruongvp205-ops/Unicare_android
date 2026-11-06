@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Calendar background & border -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2"
+        android:pathData="M26,14 L52,14 C54.2,14 56,15.8 56,18 L56,40 C56,42.2 54.2,44 52,44 L26,44 C23.8,44 22,42.2 22,40 L22,18 C22,15.8 23.8,14 26,14 Z" />
+
+    <!-- Calendar header strip -->
+    <path
+        android:fillColor="#00ACC1"
+        android:pathData="M26,14 L52,14 C54.2,14 56,15.8 56,18 L56,22 L22,22 L22,18 C22,15.8 23.8,14 26,14 Z" />
+
+    <!-- Calendar rings -->
+    <path
+        android:strokeColor="#FFA726"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M30,10 L30,16 M48,10 L48,16" />
+
+    <!-- Heart inside calendar -->
+    <path
+        android:fillColor="#FF5252"
+        android:pathData="M39,36 C39,36 31,31 31,26.5 C31,24.2 32.8,22.5 35,22.5 C36.6,22.5 38.1,23.5 39,24.8 C39.9,23.5 41.4,22.5 43,22.5 C45.2,22.5 47,24.2 47,26.5 C47,31 39,36 39,36 Z" />
+
+    <!-- Stethoscope binaural branches -->
+    <path
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M11,15 C11,21 16,26 16,30 M21,15 C21,21 16,26 16,30" />
+
+    <!-- Stethoscope eartips -->
+    <path
+        android:fillColor="#546E7A"
+        android:pathData="M11,15 A2,2 0 1,0 11,11 A2,2 0 1,0 11,15 Z M21,15 A2,2 0 1,0 21,11 A2,2 0 1,0 21,15 Z" />
+
+    <!-- Stethoscope tube -->
+    <path
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M16,30 C16,42 8,50 8,54 C8,58 16,60 26,60 C36,60 44,56 46,50" />
+
+    <!-- Stethoscope chest piece (outer ring) -->
+    <path
+        android:fillColor="#E1F5FE"
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2"
+        android:pathData="M46,49 A5,5 0 1,0 46,39 A5,5 0 1,0 46,49 Z" />
+
+    <!-- Stethoscope chest piece (inner diaphragm) -->
+    <path
+        android:fillColor="#00ACC1"
+        android:pathData="M46,46.5 A2.5,2.5 0 1,0 46,41.5 A2.5,2.5 0 1,0 46,46.5 Z" />
+</vector>
+

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Document body with folded corner -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2"
+        android:pathData="M18,10 L38,10 L48,20 L48,50 C48,52 46.5,53.5 44.5,53.5 L18,53.5 C16,53.5 14.5,52 14.5,50 L14.5,13.5 C14.5,11.5 16,10 18,10 Z" />
+
+    <!-- Folded corner flap -->
+    <path
+        android:fillColor="#CFD8DC"
+        android:strokeColor="#0288D1"
+        android:strokeWidth="1.5"
+        android:pathData="M38,10 L38,20 L48,20 Z" />
+
+    <!-- Medical cross icon on top of document -->
+    <path
+        android:fillColor="#00ACC1"
+        android:pathData="M29,16 L33,16 L33,18.5 L35.5,18.5 L35.5,22.5 L33,22.5 L33,25 L29,25 L29,22.5 L26.5,22.5 L26.5,18.5 L29,18.5 Z" />
+
+    <!-- Invoice item lines -->
+    <path
+        android:strokeColor="#90A4AE"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M22,30 L40,30 M22,36 L38,36 M22,42 L32,42" />
+
+    <!-- Orange circular badge at bottom right -->
+    <path
+        android:fillColor="#FF7043"
+        android:pathData="M36,44 A9,9 0 1,0 54,44 A9,9 0 1,0 36,44 Z" />
+
+    <!-- Currency dollar sign in badge -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M45,39 L45,49 M47,41.5 C46,40.5 43.5,40.5 43.5,42 C43.5,43.5 46.5,43.5 46.5,45.5 C46.5,47.5 43.5,47.5 42.5,46.5" />
+</vector>
+

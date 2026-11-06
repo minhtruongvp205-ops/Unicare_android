@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Document standing in tray -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2"
+        android:pathData="M20,12 L44,12 C45.6,12 47,13.4 47,15 L47,40 L17,40 L17,15 C17,13.4 18.4,12 20,12 Z" />
+
+    <!-- Top header strip on document -->
+    <path
+        android:fillColor="#0288D1"
+        android:pathData="M20,12 L44,12 C45.6,12 47,13.4 47,15 L47,18 L17,18 L17,15 C17,13.4 18.4,12 20,12 Z" />
+
+    <!-- Heart icon on price sheet -->
+    <path
+        android:fillColor="#FF5252"
+        android:pathData="M32,28 C32,28 26,24.5 26,21.5 C26,19.8 27.2,18.5 28.8,18.5 C29.9,18.5 31,19.2 32,20.2 C33,19.2 34.1,18.5 35.2,18.5 C36.8,18.5 38,19.8 38,21.5 C38,24.5 32,28 32,28 Z" />
+
+    <!-- Price item lines -->
+    <path
+        android:strokeColor="#90A4AE"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M23,32 L41,32 M23,37 L35,37" />
+
+    <!-- Tray box front with U-notch -->
+    <path
+        android:fillColor="#FFA726"
+        android:strokeColor="#FB8C00"
+        android:strokeWidth="2"
+        android:pathData="M13,36 L13,49 C13,51 14.5,52.5 16.5,52.5 L47.5,52.5 C49.5,52.5 51,51 51,49 L51,36 L43,36 C42,36 41,37 40.5,38 L38.5,42 L25.5,42 L23.5,38 C23,37 22,36 21,36 Z" />
+</vector>
+

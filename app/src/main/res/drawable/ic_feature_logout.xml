@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Door frame -->
+    <path
+        android:strokeColor="#546E7A"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M32,15 L18,15 C16,15 14.5,16.5 14.5,18.5 L14.5,45.5 C14.5,47.5 16,49 18,49 L32,49" />
+
+    <!-- Exit arrow (coral red) -->
+    <path
+        android:strokeColor="#EF5350"
+        android:strokeWidth="3.2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M24,32 L49,32 M43,25 L50,32 L43,39" />
+</vector>
+

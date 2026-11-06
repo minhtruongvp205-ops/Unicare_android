@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Stethoscope Binaural tubes -->
+    <path
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M38,16 C38,22 43,26 43,29 M48,16 C48,22 43,26 43,29" />
+
+    <!-- Ear tips -->
+    <path
+        android:fillColor="#0288D1"
+        android:pathData="M38,16 A2,2 0 1,0 38,12 A2,2 0 1,0 38,16 Z M48,16 A2,2 0 1,0 48,12 A2,2 0 1,0 48,16 Z" />
+
+    <!-- Main flexible loop tube -->
+    <path
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M43,29 C43,40 36,49 26,49 C18,49 14,43 14,36 C14,30 20,26 26,30" />
+
+    <!-- Chest piece / Diaphragm -->
+    <path
+        android:fillColor="#E1F5FE"
+        android:strokeColor="#0288D1"
+        android:strokeWidth="2"
+        android:pathData="M24,33 A5,5 0 1,0 34,33 A5,5 0 1,0 24,33 Z" />
+    <path
+        android:fillColor="#00ACC1"
+        android:pathData="M27,33 A2,2 0 1,0 31,33 A2,2 0 1,0 27,33 Z" />
+
+    <!-- Golden star / highlight for "featured" -->
+    <path
+        android:fillColor="#FFA726"
+        android:pathData="M48,34 L49.2,37.5 L53,37.5 L50,39.5 L51.2,43 L48,41 L44.8,43 L46,39.5 L43,37.5 L46.8,37.5 Z" />
+</vector>
+

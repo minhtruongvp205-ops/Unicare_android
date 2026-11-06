@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.net.Uri;
@@ -51,21 +52,23 @@ public class HomeFragment extends Fragment {
 
         List<Feature> features = new ArrayList<>();
         // Hàng 1
-        features.add(new Feature("Đặt khám", R.drawable.ic_schedule,
+        features.add(new Feature("Đặt khám", R.drawable.ic_feature_booking,
                 () -> startActivity(new Intent(getContext(), BookingActivity.class))));
-        features.add(new Feature("Lịch sử đặt khám", R.drawable.ic_calendar,
+        features.add(new Feature("Lịch sử đặt khám", R.drawable.ic_feature_history,
                 () -> startActivity(new Intent(getContext(), AppointmentsActivity.class))));
-        features.add(new Feature("Thanh toán", R.drawable.ic_medical_record,
+        features.add(new Feature("Thanh toán", R.drawable.ic_feature_payment,
                 () -> startActivity(new Intent(getContext(), PaymentActivity.class))));
-        features.add(new Feature("Hoá đơn", R.drawable.ic_medical_record, () -> startActivity(new Intent(getContext(), InvoiceActivity.class))));
+        features.add(new Feature("Hoá đơn", R.drawable.ic_feature_invoice,
+                () -> startActivity(new Intent(getContext(), InvoiceActivity.class))));
 
         // Hàng 2
-        features.add(new Feature("Hồ sơ sức khoẻ", R.drawable.ic_medical_record,
+        features.add(new Feature("Hồ sơ sức khoẻ", R.drawable.ic_feature_health_record,
                 () -> startActivity(new Intent(getContext(), HealthVitalsActivity.class))));
-        features.add(new Feature("Hướng dẫn", R.drawable.ic_search,
+        features.add(new Feature("Hướng dẫn", R.drawable.ic_feature_guide,
                 () -> startActivity(new Intent(getContext(), UserGuideActivity.class))));
-        features.add(new Feature("Theo dõi tại nhà", R.drawable.ic_medical_record,
-                () -> startActivity(new Intent(getContext(), MedicationActivity.class)))); // Sử dụng nhắc nhở thuốc cho Theo dõi tại nhà
+        features.add(new Feature("Theo dõi tại nhà", R.drawable.ic_feature_home_care,
+                () -> startActivity(new Intent(getContext(), MedicationActivity.class)))); // Sử dụng nhắc nhở thuốc cho
+                                                                                           // Theo dõi tại nhà
 
         rv.setAdapter(new FeatureAdapter(features));
     }
@@ -73,6 +76,7 @@ public class HomeFragment extends Fragment {
     private static class NewsItem {
         String title;
         String url;
+
         NewsItem(String t, String u) {
             title = t;
             url = u;
@@ -84,12 +88,15 @@ public class HomeFragment extends Fragment {
         rv.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         List<NewsItem> news = new ArrayList<>();
-        news.add(new NewsItem("Các bệnh về tim mạch: Nguyên nhân, dấu hiệu...", "https://timbenhvien.vn/cam-nang/cac-benh-ve-tim-nguyen-nhan-dau-hieu-nhan-biet-va-huong-dieu-tri/"));
-        news.add(new NewsItem("Các bệnh lý về gan thường gặp", "https://benhviendongnai.com.vn/cac-benh-ly-ve-gan-thuong-gap/"));
-        news.add(new NewsItem("Ung thư cổ tử cung: Nguyên nhân, dấu hiệu...", "https://vinuni.edu.vn/vi/ung-thu-co-tu-cung-nguyen-nhan-dau-hieu-va-phuong-phap-dieu-tri/"));
+        news.add(new NewsItem("Các bệnh về tim mạch: Nguyên nhân, dấu hiệu...",
+                "https://timbenhvien.vn/cam-nang/cac-benh-ve-tim-nguyen-nhan-dau-hieu-nhan-biet-va-huong-dieu-tri/"));
+        news.add(new NewsItem("Các bệnh lý về gan thường gặp",
+                "https://benhviendongnai.com.vn/cac-benh-ly-ve-gan-thuong-gap/"));
+        news.add(new NewsItem("Ung thư cổ tử cung: Nguyên nhân, dấu hiệu...",
+                "https://vinuni.edu.vn/vi/ung-thu-co-tu-cung-nguyen-nhan-dau-hieu-va-phuong-phap-dieu-tri/"));
 
         rv.setAdapter(new NewsAdapter(news));
-        
+
         TextView tvViewAllNews = view.findViewById(R.id.tvViewAllNews);
         if (tvViewAllNews != null) {
             tvViewAllNews.setOnClickListener(v -> {
@@ -103,15 +110,15 @@ public class HomeFragment extends Fragment {
         rv.setLayoutManager(new GridLayoutManager(getContext(), 4));
 
         List<Feature> features = new ArrayList<>();
-        features.add(new Feature("Hướng dẫn\nkhách hàng", R.drawable.ic_search,
+        features.add(new Feature("Hướng dẫn\nkhách hàng", R.drawable.ic_feature_customer_guide,
                 () -> startActivity(new Intent(getContext(), UserGuideActivity.class))));
-        features.add(new Feature("Dịch vụ\nnổi bật", R.drawable.ic_medical_record,
+        features.add(new Feature("Dịch vụ\nnổi bật", R.drawable.ic_feature_featured_service,
                 () -> startActivity(new Intent(getContext(), ServicesActivity.class))));
-        features.add(new Feature("Bảng giá\ndịch vụ", R.drawable.ic_medical_record,
+        features.add(new Feature("Bảng giá\ndịch vụ", R.drawable.ic_feature_price_list,
                 () -> startActivity(new Intent(getContext(), PriceListActivity.class))));
-        features.add(new Feature("Liên hệ", R.drawable.ic_schedule,
+        features.add(new Feature("Liên hệ", R.drawable.ic_feature_contact,
                 () -> startActivity(new Intent(getContext(), ContactActivity.class))));
-        features.add(new Feature("Đăng xuất", R.drawable.ic_person, () -> {
+        features.add(new Feature("Đăng xuất", R.drawable.ic_feature_logout, () -> {
             FirebaseAuth.getInstance().signOut();
             Toast.makeText(getContext(), "Đăng xuất thành công", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getContext(), AuthActivity.class);
@@ -136,10 +143,12 @@ public class HomeFragment extends Fragment {
 
         class Holder extends RecyclerView.ViewHolder {
             TextView title;
+            ImageView icon;
 
             Holder(View v) {
                 super(v);
                 title = v.findViewById(R.id.tvTitle);
+                icon = v.findViewById(R.id.ivIcon);
             }
         }
 
@@ -153,6 +162,9 @@ public class HomeFragment extends Fragment {
         public void onBindViewHolder(@NonNull Holder h, int pos) {
             Feature f = list.get(pos);
             h.title.setText(f.title);
+            if (h.icon != null && f.iconRes != 0) {
+                h.icon.setImageResource(f.iconRes);
+            }
             h.itemView.setOnClickListener(v -> {
                 if (f.action != null)
                     f.action.run();
