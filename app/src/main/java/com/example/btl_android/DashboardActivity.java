@@ -3,6 +3,7 @@ package com.example.btl_android;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -19,6 +20,8 @@ public class DashboardActivity extends AppCompatActivity {
         App.applyInsets(this);
 
         BottomNavigationView navView = findViewById(R.id.bottom_navigation);
+        // The root already applies system bar insets; do not add them again to the menu.
+        ViewCompat.setOnApplyWindowInsetsListener(navView, (view, insets) -> insets);
 
         navView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
