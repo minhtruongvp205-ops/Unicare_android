@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true">
 
-        <activity android:name=".SplashActivity" android:exported="true"
+        <activity android:name=".ui.auth.SplashActivity" android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -17,53 +17,53 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".AuthActivity" android:exported="false"
+        <activity android:name=".ui.auth.AuthActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".RegisterActivity" android:exported="false"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".DashboardActivity" android:exported="false"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ProfileActivity" android:exported="false"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".BookingActivity" android:exported="false"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".AppointmentsActivity" android:exported="false"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".RecordsActivity" android:exported="false"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".RecordEditorActivity" android:exported="false"
+        <activity android:name=".ui.auth.RegisterActivity" android:exported="false"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".HealthVitalsActivity" android:exported="false"
+        <activity android:name=".ui.dashboard.DashboardActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".MedicationActivity" android:exported="false"
+        <activity android:name=".ui.dashboard.ProfileActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".RatingActivity" android:exported="false"
+        <activity android:name=".ui.appointment.BookingActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.appointment.AppointmentsActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.medical.RecordsActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.medical.RecordEditorActivity" android:exported="false"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".DoctorStatsActivity" android:exported="false"
+        <activity android:name=".ui.medical.HealthVitalsActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".DoctorScheduleActivity" android:exported="false"
+        <activity android:name=".ui.medical.MedicationActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.payment.RatingActivity" android:exported="false"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".HelpDetailActivity" android:exported="false"
+        <activity android:name=".ui.medical.DoctorStatsActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".PriceListActivity" android:exported="false"
+        <activity android:name=".ui.appointment.DoctorScheduleActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".UserGuideActivity" android:exported="false"
+
+        <activity android:name=".ui.info.HelpDetailActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ContactActivity" android:exported="false"
+        <activity android:name=".ui.payment.PriceListActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ServicesActivity" android:exported="false"
+        <activity android:name=".ui.info.UserGuideActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ServiceDetailActivity" android:exported="false"
+        <activity android:name=".ui.info.ContactActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".InvoiceActivity" android:exported="false"
+        <activity android:name=".ui.payment.ServicesActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".PaymentActivity" android:exported="false"
+        <activity android:name=".ui.payment.ServiceDetailActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".NewsActivity" android:exported="false"
+        <activity android:name=".ui.payment.InvoiceActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.payment.PaymentActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui.info.NewsActivity" android:exported="false"
             android:screenOrientation="portrait"/>
     </application>
 </manifest>
