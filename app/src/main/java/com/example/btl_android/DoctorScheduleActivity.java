@@ -138,7 +138,7 @@ public class DoctorScheduleActivity extends AppCompatActivity {
 
             App.db().collection("doctor_schedules").document(App.uid())
                     .collection("slots").add(data)
-                    .addOnSuccessListener(ref -> App.note(this, "Đã thêm khung giờ " + label))
+                    .addOnSuccessListener(ref -> App.note(this, "Thêm khung giờ làm việc thành công: " + label))
                     .addOnFailureListener(e -> App.error(this, e));
 
         }, now.get(Calendar.HOUR_OF_DAY), 0, true).show();
@@ -182,7 +182,7 @@ public class DoctorScheduleActivity extends AppCompatActivity {
                                 data.put("createdAt", FieldValue.serverTimestamp());
                                 App.db().collection("doctor_schedules").document(App.uid())
                                         .collection("slots").add(data)
-                                        .addOnSuccessListener(ref -> App.note(this, "Đã sao chép sang " + DAY_NAMES[which]))
+                                        .addOnSuccessListener(ref -> App.note(this, "Sao chép lịch làm việc sang " + DAY_NAMES[which] + " thành công!"))
                                         .addOnFailureListener(e -> App.error(this, e));
                             });
                 })
@@ -238,7 +238,7 @@ public class DoctorScheduleActivity extends AppCompatActivity {
                     new AlertDialog.Builder(DoctorScheduleActivity.this)
                         .setMessage("Xóa khung giờ " + label + "?")
                         .setPositiveButton("Xóa", (dlg, w) -> d.getReference().delete()
-                            .addOnSuccessListener(x -> App.note(DoctorScheduleActivity.this, "Đã xóa")))
+                            .addOnSuccessListener(x -> App.note(DoctorScheduleActivity.this, "Xóa khung giờ làm việc thành công!")))
                         .setNegativeButton("Hủy", null).show()
                 );
             }

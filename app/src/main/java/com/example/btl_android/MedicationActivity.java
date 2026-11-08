@@ -490,7 +490,7 @@ public class MedicationActivity extends AppCompatActivity {
                         data.put("appointmentId", appointmentId);
                     App.db().collection("medications").document(patientId)
                             .collection("list").add(data)
-                            .addOnSuccessListener(ref -> App.note(this, "Đã thêm " + name))
+                            .addOnSuccessListener(ref -> App.note(this, "Thêm lịch uống thuốc thành công: " + name))
                             .addOnFailureListener(error -> App.error(this, error));
                     dialog.dismiss();
                 }));
@@ -573,7 +573,10 @@ public class MedicationActivity extends AppCompatActivity {
                     Map<String, Object> upd = new HashMap<>();
                     upd.put("doneToday_" + TODAY, !isDone);
                     m.doc.getReference().update(upd)
-                            .addOnSuccessListener(x -> updateProgress());
+                            .addOnSuccessListener(x -> {
+                                updateProgress();
+                                App.note(MedicationActivity.this, !isDone ? "Đã ghi nhận uống thuốc thành công!" : "Đã hủy đánh dấu uống thuốc");
+                            });
                 });
                 h.del.setVisibility(doctorMode ? View.VISIBLE : View.GONE);
                 if (doctorMode) {
@@ -581,7 +584,7 @@ public class MedicationActivity extends AppCompatActivity {
                             .setMessage("Xóa thuốc " + m.name + "?")
                             .setPositiveButton("Xóa", (dlg, w) -> {
                                 if (m.doc != null) m.doc.getReference().delete()
-                                        .addOnSuccessListener(x -> App.note(MedicationActivity.this, "Đã xóa"));
+                                        .addOnSuccessListener(x -> App.note(MedicationActivity.this, "Xóa lịch uống thuốc thành công!"));
                             })
                             .setNegativeButton("Hủy", null).show());
                     h.itemView.setOnLongClickListener(v -> { showEditDialog(m.doc); return true; });
@@ -665,7 +668,7 @@ public class MedicationActivity extends AppCompatActivity {
                     updates.put("timeLabel", TIME_LABELS[pos]);
                     updates.put("frequency", App.value(edtFrequency).isEmpty() ? "Hàng ngày" : App.value(edtFrequency));
                     document.getReference().update(updates)
-                            .addOnSuccessListener(ref -> App.note(this, "Đã cập nhật " + name))
+                            .addOnSuccessListener(ref -> App.note(this, "Cập nhật lịch uống thuốc thành công: " + name))
                             .addOnFailureListener(error -> App.error(this, error));
                     dialog.dismiss();
                 }));

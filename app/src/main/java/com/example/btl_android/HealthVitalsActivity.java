@@ -298,7 +298,7 @@ public class HealthVitalsActivity extends AppCompatActivity {
             batch.commit()
                     .addOnSuccessListener(unused -> {
                         savingVitals = false;
-                        App.note(this, editing ? "Đã cập nhật chỉ số." : "Đã lưu chỉ số.");
+                        App.note(this, editing ? "Cập nhật chỉ số sức khoẻ thành công!" : "Lưu chỉ số sức khoẻ thành công!");
                         dialog.dismiss();
                     })
                     .addOnFailureListener(error -> {

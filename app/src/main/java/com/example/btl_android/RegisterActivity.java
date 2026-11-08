@@ -122,7 +122,7 @@ public class RegisterActivity extends AppCompatActivity {
                     App.db().collection("users").document(uid).set(data)
                             .addOnSuccessListener(unused -> {
                                 FirebaseAuth.getInstance().signOut();
-                                App.note(this, "Đăng ký thành công. Hãy đăng nhập.");
+                                App.note(this, "Đăng ký tài khoản thành công! Vui lòng đăng nhập.");
                                 Intent intent = new Intent(this, AuthActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);

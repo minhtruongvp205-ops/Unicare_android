@@ -21,6 +21,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.WriteBatch;
@@ -160,8 +161,25 @@ public class RecordEditorActivity extends AppCompatActivity {
                             + "\nChuyên khoa: " + App.str(d, "specialty")
                             + "\nThời gian: " + App.date(d.getTimestamp("startAt"))
                             + "\nLý do khám: " + App.str(d, "reason"));
-                    btnVitals.setEnabled(true);
-                    addMedicine.setEnabled(!medicines.isEmpty());
+                    
+                    // Kiểm tra xem đơn thuốc này đã được bệnh nhân thanh toán/tạo order chưa
+                    App.db().collection("orders")
+                            .whereEqualTo("appointmentId", appointmentId)
+                            .get()
+                            .addOnSuccessListener(query -> {
+                                boolean isPaid = !query.isEmpty();
+                                if (isPaid) {
+                                    message.setText("Bệnh nhân đã thanh toán hoặc tạo đơn đặt mua thuốc. Bạn không thể sửa đổi phiếu khám này nữa.");
+                                    btnVitals.setEnabled(false);
+                                    addMedicine.setEnabled(false);
+                                    save.setEnabled(false);
+                                } else {
+                                    btnVitals.setEnabled(true);
+                                    addMedicine.setEnabled(!medicines.isEmpty());
+                                    save.setEnabled(true);
+                                }
+                            });
+
                     loadVitalsSummary();
                     App.db().collection("medical_records").document(appointmentId).get()
                             .addOnSuccessListener(r -> {
@@ -310,8 +328,7 @@ public class RecordEditorActivity extends AppCompatActivity {
                     legacyOnly = false;
                     txtLegacy.setVisibility(View.GONE);
                     refreshPrescription();
-                    App.note(this, "Đã thêm " + added
-                            + " loại thuốc. Nhấn từng thuốc hoặc 'Nhập liều' để kê đơn.");
+                    App.note(this, "Đã thêm " + added + " thuốc vào đơn thành công! Nhấn từng thuốc để nhập liều.");
                 })
                 .show();
     }
@@ -506,18 +523,22 @@ public class RecordEditorActivity extends AppCompatActivity {
         WriteBatch batch = App.db().batch();
         batch.set(record, r, SetOptions.merge());
         batch.set(plan, t, SetOptions.merge());
-        if ("CONFIRMED".equals(App.str(appointment, "status")))
+        if ("CONFIRMED".equals(App.str(appointment, "status"))) {
             batch.update(appt, "status", "COMPLETED", "updatedAt", FieldValue.serverTimestamp());
+        } else if ("COMPLETED".equals(App.str(appointment, "status"))) {
+            // Đã khám xong nhưng bác sĩ sửa lại -> cập nhật updatedAt để kích hoạt thông báo cho bệnh nhân
+            batch.update(appt, "updatedAt", FieldValue.serverTimestamp());
+        }
         batch.commit()
                 .addOnSuccessListener(x -> {
-                    App.note(this, "Đã lưu phiếu khám, đơn thuốc và hoàn thành lượt khám.");
+                    App.note(this, "Lưu bệnh án, đơn thuốc và hoàn thành khám bệnh thành công!");
                     finish();
                 })
                 .addOnFailureListener(e -> {
                     save.setEnabled(true);
-                    if (e instanceof com.google.firebase.firestore.FirebaseFirestoreException
-                            && ((com.google.firebase.firestore.FirebaseFirestoreException) e).getCode()
-                            == com.google.firebase.firestore.FirebaseFirestoreException.Code.PERMISSION_DENIED) {
+                    if (e instanceof FirebaseFirestoreException
+                            && ((FirebaseFirestoreException) e).getCode()
+                            == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
                         message.setText("Firebase từ chối lưu (PERMISSION_DENIED). "
                                 + "Kiểm tra Rules của medical_records, treatment_plans và appointments "
                                 + "trên Firebase Console, và quyền bác sĩ được phân công.");

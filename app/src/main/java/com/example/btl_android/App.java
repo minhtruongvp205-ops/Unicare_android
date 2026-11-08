@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
 import android.widget.EditText;
 import android.view.View;
@@ -88,7 +90,10 @@ public final class App {
     }
 
     public static void note(Context c, String s) {
-        Toast.makeText(c, s, Toast.LENGTH_LONG).show();
+        if (c == null || s == null || s.trim().isEmpty()) return;
+        new Handler(Looper.getMainLooper()).post(() ->
+                Toast.makeText(c.getApplicationContext(), s, Toast.LENGTH_SHORT).show()
+        );
     }
 
     public static void error(Context c, Exception e) {
@@ -97,7 +102,9 @@ public final class App {
     }
 
     public static void logout(Activity a) {
+        AppNotificationManager.stopListening();
         FirebaseAuth.getInstance().signOut();
+        note(a, "Đăng xuất thành công!");
         Intent i = new Intent(a, AuthActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         a.startActivity(i);

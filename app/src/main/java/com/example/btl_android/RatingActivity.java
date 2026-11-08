@@ -121,7 +121,7 @@ public class RatingActivity extends AppCompatActivity {
         App.db().collection("ratings").document(appointmentId).set(data)
                 .addOnSuccessListener(x -> {
                     ((TextView) findViewById(R.id.txtMessage)).setText("✓ Cảm ơn bạn đã đánh giá!");
-                    App.note(this, "Đánh giá đã được gửi!");
+                    App.note(this, "Gửi đánh giá bác sĩ thành công! Cảm ơn bạn.");
                     // Mark appointment as rated
                     App.db().collection("appointments").document(appointmentId)
                             .update("rated", true);

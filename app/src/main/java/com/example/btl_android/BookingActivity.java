@@ -138,7 +138,7 @@ public class BookingActivity extends AppCompatActivity {
             App.db().runTransaction(tr -> {
                         if(tr.get(slot).exists()) throw new IllegalStateException("Khung giờ đã có người đặt, vui lòng chọn giờ khác");
                         tr.set(appt,a); tr.set(slot,sl); return null;
-                    }).addOnSuccessListener(x -> {submit.setEnabled(true);App.note(this,"Đã đặt lịch, đang chờ bác sĩ xác nhận"); finish();})
+                    }).addOnSuccessListener(x -> {submit.setEnabled(true);App.note(this,"Đặt lịch khám thành công! Đang chờ bác sĩ xác nhận."); finish();})
                     .addOnFailureListener(e -> {submit.setEnabled(true);App.error(this,e);});
         }).addOnFailureListener(e -> {submit.setEnabled(true);App.error(this,e);});
     }
