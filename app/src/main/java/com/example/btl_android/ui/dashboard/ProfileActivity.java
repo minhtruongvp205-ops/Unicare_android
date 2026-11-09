@@ -48,11 +48,11 @@ public class ProfileActivity extends AppCompatActivity {
         logout.setOnClickListener(v -> App.logout(this));
         message=findViewById(R.id.txtMessage);
         save.setEnabled(false);
-        ((TextView)findViewById(R.id.txtEmail)).setText("Email: "+App.user().getEmail());
+        ((TextView)findViewById(R.id.txtEmail)).setText(App.user().getEmail());
         App.db().collection("users").document(App.uid()).get().addOnSuccessListener(d -> {
             if(!d.exists()){message.setText("Không có hồ sơ người dùng");return;}
             role=App.str(d,"role");
-            ((TextView)findViewById(R.id.txtRole)).setText("Vai trò: "+role);
+            ((TextView)findViewById(R.id.txtRole)).setText(role);
             name.setText(App.str(d,"name"));phone.setText(App.str(d,"phone"));
             dob.setText(App.str(d,"dob"));gender.setText(App.str(d,"gender"), false);
             address.setText(App.str(d,"address"));history.setText(App.str(d,"medicalHistory"));
