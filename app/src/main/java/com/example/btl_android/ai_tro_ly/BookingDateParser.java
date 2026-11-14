@@ -100,8 +100,13 @@ public final class BookingDateParser {
                 }
             }
         }
-        if (target == null)
-            return problem("Bạn muốn khám ngày nào? Ví dụ: khám mắt chiều thứ Năm tuần tới hoặc 19/11/2026.");
+        if (target == null) {
+            target = (Calendar) today.clone();
+            Calendar nowCal = Calendar.getInstance(VIETNAM);
+            if (nowCal.get(Calendar.HOUR_OF_DAY) >= 15) {
+                target.add(Calendar.DAY_OF_MONTH, 1);
+            }
+        }
 
         long diffDays = (target.getTimeInMillis() - today.getTimeInMillis()) / (24L * 60 * 60 * 1000);
         if (diffDays < 0) return problem("Ngày đã qua. Hãy chọn một ngày từ hôm nay trở đi.");

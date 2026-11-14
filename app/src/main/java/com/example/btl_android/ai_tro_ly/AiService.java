@@ -37,6 +37,7 @@ public final class AiService {
         // Official Firebase AI Logic Java Structured Output API.
         Map<String, Schema> properties = new HashMap<>();
         properties.put("specialty", Schema.str());
+        properties.put("specialtyReason", Schema.str());
         properties.put("period", Schema.enumeration(Arrays.asList("morning", "afternoon", "evening", "any")));
         properties.put("time", Schema.str());
         Schema schema = Schema.obj(properties, Collections.emptyList());

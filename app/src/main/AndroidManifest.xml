@@ -14,7 +14,7 @@
 
         <!-- Man hinh khoi dong -->
         <activity
-            android:name=".ui_giao_dien_giao_dien.auth_dang_nhap.SplashActivity"
+            android:name=".ui_giao_dien.auth_dang_nhap.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -25,118 +25,118 @@
 
         <!-- Dang nhap va dang ky -->
         <activity
-            android:name=".ui_giao_dien_giao_dien.auth_dang_nhap.AuthActivity"
+            android:name=".ui_giao_dien.auth_dang_nhap.AuthActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.auth_dang_nhap.RegisterActivity"
+            android:name=".ui_giao_dien.auth_dang_nhap.RegisterActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <!-- Trang chu va tai khoan -->
         <activity
-            android:name=".ui_giao_dien_giao_dien.dashboard_trang_chu.DashboardActivity"
+            android:name=".ui_giao_dien.dashboard_trang_chu.DashboardActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.dashboard_trang_chu.ProfileActivity"
+            android:name=".ui_giao_dien.dashboard_trang_chu.ProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <!-- Dat lich hen -->
         <activity
-            android:name=".ui_giao_dien_giao_dien.appointment_lich_hen.BookingActivity"
+            android:name=".ui_giao_dien.appointment_lich_hen.BookingActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.appointment_lich_hen.AppointmentsActivity"
+            android:name=".ui_giao_dien.appointment_lich_hen.AppointmentsActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <!-- Ho so y te -->
         <activity
-            android:name=".ui_giao_dien_giao_dien.medical_kham_benh.RecordsActivity"
+            android:name=".ui_giao_dien.medical_kham_benh.RecordsActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.medical_kham_benh.RecordEditorActivity"
+            android:name=".ui_giao_dien.medical_kham_benh.RecordEditorActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.medical_kham_benh.HealthVitalsActivity"
+            android:name=".ui_giao_dien.medical_kham_benh.HealthVitalsActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.medical_kham_benh.MedicationActivity"
+            android:name=".ui_giao_dien.medical_kham_benh.MedicationActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.medical_kham_benh.DoctorStatsActivity"
+            android:name=".ui_giao_dien.medical_kham_benh.DoctorStatsActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <!-- Lich lam viec bac si -->
         <activity
-            android:name=".ui_giao_dien_giao_dien.appointment_lich_hen.DoctorScheduleActivity"
+            android:name=".ui_giao_dien.appointment_lich_hen.DoctorScheduleActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <!-- Danh gia va thanh toan -->
         <activity
-            android:name=".ui_giao_dien_giao_dien.payment_thanh_toan.RatingActivity"
+            android:name=".ui_giao_dien.payment_thanh_toan.RatingActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.payment_thanh_toan.PriceListActivity"
+            android:name=".ui_giao_dien.payment_thanh_toan.PriceListActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.payment_thanh_toan.ServicesActivity"
+            android:name=".ui_giao_dien.payment_thanh_toan.ServicesActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.payment_thanh_toan.ServiceDetailActivity"
+            android:name=".ui_giao_dien.payment_thanh_toan.ServiceDetailActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.payment_thanh_toan.InvoiceActivity"
+            android:name=".ui_giao_dien.payment_thanh_toan.InvoiceActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.payment_thanh_toan.PaymentActivity"
+            android:name=".ui_giao_dien.payment_thanh_toan.PaymentActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <!-- Tin tuc va ho tro -->
         <activity
-            android:name=".ui_giao_dien_giao_dien.info_tin_tuc_ho_tro.HelpDetailActivity"
+            android:name=".ui_giao_dien.info_tin_tuc_ho_tro.HelpDetailActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.info_tin_tuc_ho_tro.UserGuideActivity"
+            android:name=".ui_giao_dien.info_tin_tuc_ho_tro.UserGuideActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.info_tin_tuc_ho_tro.ContactActivity"
+            android:name=".ui_giao_dien.info_tin_tuc_ho_tro.ContactActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".ui_giao_dien_giao_dien.info_tin_tuc_ho_tro.NewsActivity"
+            android:name=".ui_giao_dien.info_tin_tuc_ho_tro.NewsActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
 

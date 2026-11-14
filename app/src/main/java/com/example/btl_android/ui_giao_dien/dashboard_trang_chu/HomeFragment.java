@@ -1,21 +1,21 @@
-package com.example.btl_android.ui_giao_dien_giao_dien.dashboard_trang_chu;
-import com.example.btl_android.ai_tro_ly.AiFloatingBubble;
+package com.example.btl_android.ui_giao_dien.dashboard_trang_chu;
 
 import com.example.btl_android.R;
 import com.example.btl_android.ai_tro_ly.AiAssistantActivity;
+import com.example.btl_android.ai_tro_ly.AiFloatingBubble;
 import com.example.btl_android.core_he_thong.*;
 import com.example.btl_android.core_he_thong.manager.*;
 import com.example.btl_android.data_du_lieu.*;
 import com.example.btl_android.data_du_lieu.model.*;
 import com.example.btl_android.utils_tien_ich.*;
-import com.example.btl_android.ui_giao_dien_giao_dien.auth_dang_nhap.*;
-import com.example.btl_android.ui_giao_dien_giao_dien.dashboard_trang_chu.*;
-import com.example.btl_android.ui_giao_dien_giao_dien.appointment_lich_hen.*;
-import com.example.btl_android.ui_giao_dien_giao_dien.medical_kham_benh.*;
-import com.example.btl_android.ui_giao_dien_giao_dien.medical_kham_benh.adapter.*;
-import com.example.btl_android.ui_giao_dien_giao_dien.payment_thanh_toan.*;
-import com.example.btl_android.ui_giao_dien_giao_dien.payment_thanh_toan.adapter.*;
-import com.example.btl_android.ui_giao_dien_giao_dien.info_tin_tuc_ho_tro.*;
+import com.example.btl_android.ui_giao_dien.auth_dang_nhap.*;
+import com.example.btl_android.ui_giao_dien.dashboard_trang_chu.*;
+import com.example.btl_android.ui_giao_dien.appointment_lich_hen.*;
+import com.example.btl_android.ui_giao_dien.medical_kham_benh.*;
+import com.example.btl_android.ui_giao_dien.medical_kham_benh.adapter.*;
+import com.example.btl_android.ui_giao_dien.payment_thanh_toan.*;
+import com.example.btl_android.ui_giao_dien.payment_thanh_toan.adapter.*;
+import com.example.btl_android.ui_giao_dien.info_tin_tuc_ho_tro.*;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -231,12 +231,14 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    @Override public void onResume() {
+    @Override
+    public void onResume() {
         super.onResume();
         AiFloatingBubble.attach(this);
     }
 
-    @Override public void onPause() {
+    @Override
+    public void onPause() {
         AiFloatingBubble.detach(this);
         super.onPause();
     }
