@@ -49,7 +49,6 @@ public class AiAssistantActivity extends AppCompatActivity {
         App.requireLogin(this);
         if (App.user() == null) return;
         setContentView(R.layout.activity_ai_assistant);
-        App.applyInsets(this);
 
         status = findViewById(R.id.aiStatus);
         input = findViewById(R.id.aiInput);
@@ -96,7 +95,10 @@ public class AiAssistantActivity extends AppCompatActivity {
         autoBooking = new AiAutoBooking();
         patientDataHelper = new AiPatientDataHelper();
 
-        findViewById(R.id.btnAiBack).setOnClickListener(v -> finish());
+        View btnBack = findViewById(R.id.btnAiBack);
+        if (btnBack != null) btnBack.setOnClickListener(v -> finish());
+        View btnBackAlt = findViewById(R.id.btnBack);
+        if (btnBackAlt != null) btnBackAlt.setOnClickListener(v -> finish());
         send.setOnClickListener(v -> sendChat());
         
         // Bấm góc trái (icon bên dưới thanh tiêu đề) để mở drawer lịch sử từng đoạn chat
