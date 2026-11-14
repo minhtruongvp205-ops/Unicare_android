@@ -17,8 +17,8 @@
             android:id="@+id/aiHeaderBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="48dp"
-            android:paddingBottom="12dp"
+            android:paddingTop="70dp"
+            android:paddingBottom="14dp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"
             android:background="#FFFFFF">
@@ -264,8 +264,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingTop="48dp"
-            android:paddingBottom="12dp"
+            android:paddingTop="70dp"
+            android:paddingBottom="14dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp">
 
