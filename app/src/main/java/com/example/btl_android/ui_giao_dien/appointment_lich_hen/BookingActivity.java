@@ -63,6 +63,7 @@ public class BookingActivity extends AppCompatActivity {
         when=findViewById(R.id.txtWhen); message=findViewById(R.id.txtMessage);
         reason=findViewById(R.id.edtReason); submit=findViewById(R.id.btnBookNow);
         tilReason=findViewById(R.id.tilReason);
+        applyAiPrefill();
         submit.setEnabled(false);
         findViewById(R.id.btnChooseDate).setOnClickListener(v -> showDatePickerDialog());
         findViewById(R.id.btnChooseTime).setOnClickListener(v -> {
@@ -79,6 +80,33 @@ public class BookingActivity extends AppCompatActivity {
         });
     }
     // Mẫu MaterialDatePicker của thầy; chuyển đúng ngày UTC sang Calendar địa phương.
+    private void applyAiPrefill() {
+        String why = getIntent().getStringExtra("ai_reason");
+        if (why != null && !why.trim().isEmpty()) reason.setText(why);
+        String date = getIntent().getStringExtra("ai_date");
+        String time = getIntent().getStringExtra("ai_time");
+        if (date == null || time == null) return;
+        try {
+            SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+            f.setLenient(false);
+            Date d = f.parse(date + " " + time);
+            if (d != null && d.getTime() > System.currentTimeMillis() + 5 * 60_000L) {
+                selected.setTime(d);
+                dateChosen = true; timeChosen = true;
+                updateDateLabel();
+            }
+        } catch (Exception ignored) { /* Let user choose manually. */ }
+    }
+    private void applySuggestedDoctor() {
+        String id = getIntent().getStringExtra("ai_doctor_id");
+        if (id == null || id.isEmpty()) return;
+        for (int i=0; i<doctors.size(); i++) {
+            if (id.equals(doctors.get(i).uid)) {
+                doctorSpinner.setSelection(i);
+                return;
+            }
+        }
+    }
     private void showDatePickerDialog() {
         CalendarConstraints constraints = new CalendarConstraints.Builder()
                 .setValidator(DateValidatorPointForward.now()).build();
@@ -125,7 +153,7 @@ public class BookingActivity extends AppCompatActivity {
             doctors.clear();
             for(QueryDocumentSnapshot d:s) doctors.add(new DoctorOption(d.getId(),App.str(d,"name"),App.str(d,"specialty")));
             ArrayAdapter<DoctorOption> a=new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,doctors);
-            a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); doctorSpinner.setAdapter(a);
+            a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); doctorSpinner.setAdapter(a); applySuggestedDoctor();
             submit.setEnabled(!doctors.isEmpty());
             message.setText(doctors.isEmpty()?"Chưa có bác sĩ. Hãy tạo tài khoản bác sĩ và hồ sơ doctors trong Firebase Console theo README.":"");
         }).addOnFailureListener(e -> message.setText("Không tải được danh sách bác sĩ: "+e.getLocalizedMessage()));

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FAFBFE">
+
+    <!-- Header: same visual hierarchy as the reference screenshot. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="82dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="18dp"
+        android:paddingEnd="22dp"
+        android:background="#FFFFFF">
+
+        <ImageView
+            android:id="@+id/btnAiBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_ai_arrow_back"
+            android:contentDescription="Quay lại" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="Hỏi - đáp\n(Chatbot)"
+            android:textColor="#142D4F"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:lineSpacingExtra="2dp" />
+    </LinearLayout>
+
+    <View android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#E4EAF1" />
+
+    <!-- Removed Small quick-action menu -->
+
+    <!-- Composer is INSIDE the scroll content, not pinned to bottom of screen. -->
+    <ScrollView
+        android:id="@+id/aiScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true"
+        android:clipToPadding="false"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/aiChatContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingTop="16dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="48dp">
+
+            <LinearLayout
+                android:id="@+id/aiWelcome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Xin chào!"
+                    android:textColor="#0E2A50"
+                    android:textSize="36sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="Tôi là UniCare AI, trợ lý sức khỏe đồng hành cùng bạn. Tôi có thể giải đáp kiến thức y tế phổ thông, giúp bạn hiểu hồ sơ bệnh án và tìm lịch khám phù hợp. Bạn muốn bắt đầu từ đâu?"
+                    android:textColor="#557690"
+                    android:textSize="18sp"
+                    android:lineSpacingExtra="6dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/btnAiRecords"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:minHeight="44dp"
+                        android:paddingStart="6dp"
+                        android:paddingEnd="6dp"
+                        android:background="@drawable/bg_ai_suggestion"
+                        android:text="Tóm tắt bệnh án"
+                        android:textColor="#5C718C"
+                        android:textSize="14sp" />
+
+                    <Space
+                        android:layout_width="10dp"
+                        android:layout_height="1dp" />
+
+                    <TextView
+                        android:id="@+id/btnAiBooking"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:minHeight="44dp"
+                        android:background="@drawable/bg_ai_suggestion"
+                        android:text="AI đặt lịch khám"
+                        android:textColor="#5C718C"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Chat bubbles appear only after first sent message / AI result. -->
+            <LinearLayout
+                android:id="@+id/aiMessages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/aiInputPanel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:background="@drawable/bg_ai_input_panel"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="15dp"
+                android:paddingTop="7dp"
+                android:paddingEnd="9dp"
+                android:paddingBottom="7dp">
+
+                <EditText
+                    android:id="@+id/aiInput"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:hint="Vui lòng đặt câu hỏi..."
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:minHeight="48dp"
+                    android:maxLines="4"
+                    android:padding="0dp"
+                    android:textColor="#163353"
+                    android:textColorHint="#9DAFC1"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/aiSend"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/bg_ai_send_circle"
+                    android:contentDescription="Gửi câu hỏi"
+                    android:padding="12dp"
+                    android:src="@drawable/ic_ai_send_up" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/aiStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textColor="#607F98"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/aiDisclaimer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="26dp"
+                android:text="Nội dung được tạo bởi trí tuệ nhân tạo (AI) và chỉ mang tính tham khảo, không thay thế tư vấn, chẩn đoán hoặc điều trị của bác sĩ."
+                android:textColor="#607F98"
+                android:textSize="15sp"
+                android:lineSpacingExtra="5dp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

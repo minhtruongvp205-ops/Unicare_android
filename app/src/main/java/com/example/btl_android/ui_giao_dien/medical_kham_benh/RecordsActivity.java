@@ -1,6 +1,7 @@
 package com.example.btl_android.ui_giao_dien_giao_dien.medical_kham_benh;
 
 import com.example.btl_android.R;
+import com.example.btl_android.ai_tro_ly.AiAssistantActivity;
 import com.example.btl_android.core_he_thong.*;
 import com.example.btl_android.core_he_thong.manager.*;
 import com.example.btl_android.data_du_lieu.*;
@@ -147,6 +148,13 @@ public class RecordsActivity extends AppCompatActivity {
                             .setTitle("Chi tiết bệnh án")
                             .setMessage(detail)
                             .setNegativeButton("Đóng", null);
+                    if ("patient".equals(role)) {
+                        dialog.setNeutralButton("AI tóm tắt", (d, which) -> {
+                            Intent intent = new Intent(this, AiAssistantActivity.class);
+                            intent.putExtra("ai_record_id", document.getId());
+                            startActivity(intent);
+                        });
+                    }
                     if ("doctor".equals(role)) {
                         dialog.setPositiveButton("Chỉnh sửa", (d, which) -> {
                             Intent intent = new Intent(this, RecordEditorActivity.class);

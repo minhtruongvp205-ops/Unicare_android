@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
+        android:name=".ai_tro_ly.UniCareAiApplication"
         android:theme="@style/Theme.UniCare"
         android:allowBackup="false"
         android:label="@string/app_name"
@@ -139,6 +140,11 @@
             android:exported="false"
             android:screenOrientation="portrait"/>
 
+            <!-- UniCare AI -->
+        <activity
+            android:name=".ai_tro_ly.AiAssistantActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

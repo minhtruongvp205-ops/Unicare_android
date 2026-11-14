@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="84dp"
+    android:layout_height="86dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:elevation="12dp"
+    android:contentDescription="Mở trợ lý UniCare AI">
+
+    <ImageView
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_gravity="bottom|start"
+        android:layout_marginStart="2dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/bg_ai_floating_circle"
+        android:padding="16dp"
+        android:src="@drawable/ic_ai_bot"
+        android:contentDescription="@null" />
+
+    <TextView
+        android:layout_width="42dp"
+        android:layout_height="31dp"
+        android:layout_gravity="top|end"
+        android:background="@drawable/bg_ai_badge"
+        android:gravity="center"
+        android:text="AI"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+</FrameLayout>

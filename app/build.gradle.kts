@@ -25,9 +25,16 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation(platform("com.google.firebase:firebase-bom:34.19.0"))
+    implementation(platform("com.google.firebase:firebase-bom:35.2.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-appcheck-playintegrity")
+// Gemini AI
+    implementation("com.google.firebase:firebase-ai")
+// Dung cho ListenableFuture trong Java
+    implementation("com.google.guava:guava:31.0.1-android")
+// App Check, chi su dung debug provider khi test
+    implementation("com.google.firebase:firebase-appcheck-debug")
     implementation("androidx.recyclerview:recyclerview:1.4.0")
     implementation("androidx.cardview:cardview:1.0.0")
 }

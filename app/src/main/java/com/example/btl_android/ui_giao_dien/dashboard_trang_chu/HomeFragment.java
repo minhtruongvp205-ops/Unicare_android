@@ -1,6 +1,8 @@
 package com.example.btl_android.ui_giao_dien_giao_dien.dashboard_trang_chu;
+import com.example.btl_android.ai_tro_ly.AiFloatingBubble;
 
 import com.example.btl_android.R;
+import com.example.btl_android.ai_tro_ly.AiAssistantActivity;
 import com.example.btl_android.core_he_thong.*;
 import com.example.btl_android.core_he_thong.manager.*;
 import com.example.btl_android.data_du_lieu.*;
@@ -82,8 +84,7 @@ public class HomeFragment extends Fragment {
         features.add(new Feature("Hướng dẫn", R.drawable.ic_feature_guide,
                 () -> startActivity(new Intent(getContext(), UserGuideActivity.class))));
         features.add(new Feature("Theo dõi tại nhà", R.drawable.ic_feature_home_care,
-                () -> startActivity(new Intent(getContext(), MedicationActivity.class)))); // Sử dụng nhắc nhở thuốc cho
-                                                                                           // Theo dõi tại nhà
+                () -> startActivity(new Intent(getContext(), MedicationActivity.class)))); // Sử dụng nhắc nhở thuốc cho Theo dõi tại nhà
 
         rv.setAdapter(new FeatureAdapter(features));
     }
@@ -228,5 +229,15 @@ public class HomeFragment extends Fragment {
         public int getItemCount() {
             return list.size();
         }
+    }
+
+    @Override public void onResume() {
+        super.onResume();
+        AiFloatingBubble.attach(this);
+    }
+
+    @Override public void onPause() {
+        AiFloatingBubble.detach(this);
+        super.onPause();
     }
 }
