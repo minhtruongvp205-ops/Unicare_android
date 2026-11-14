@@ -77,8 +77,6 @@
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tiền sử bệnh" android:textColor="#1A1A2E" android:textSize="16sp" android:textStyle="bold"/>
 
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Chỉ dùng dữ liệu giả lập" android:textColor="#9CA3AF" android:textSize="12sp"/>
-
                 <com.google.android.material.textfield.TextInputLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:hint="Mô tả tiền sử bệnh" style="@style/Widget.UniCare.TextInputLayout" android:id="@+id/tilMedicalHistory">
                     <com.google.android.material.textfield.TextInputEditText android:id="@+id/edtMedicalHistory" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textMultiLine" android:lines="3" android:gravity="top" android:minHeight="52dp"/>
                 </com.google.android.material.textfield.TextInputLayout>

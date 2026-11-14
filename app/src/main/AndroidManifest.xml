@@ -9,7 +9,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true">
 
-        <activity android:name=".SplashActivity" android:exported="true"
+        <activity android:name=".ui_giao_dien.auth_dang_nhap.SplashActivity" android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -17,53 +17,53 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".AuthActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.auth_dang_nhap.AuthActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".RegisterActivity" android:exported="false"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".DashboardActivity" android:exported="false"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ProfileActivity" android:exported="false"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".BookingActivity" android:exported="false"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".AppointmentsActivity" android:exported="false"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".RecordsActivity" android:exported="false"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".RecordEditorActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.auth_dang_nhap.RegisterActivity" android:exported="false"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".HealthVitalsActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.dashboard_trang_chu.DashboardActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".MedicationActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.dashboard_trang_chu.ProfileActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".RatingActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.appointment_lich_hen.BookingActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui_giao_dien.appointment_lich_hen.AppointmentsActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui_giao_dien.medical_kham_benh.RecordsActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui_giao_dien.medical_kham_benh.RecordEditorActivity" android:exported="false"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".DoctorStatsActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.medical_kham_benh.HealthVitalsActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".DoctorScheduleActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.medical_kham_benh.MedicationActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui_giao_dien.payment_thanh_toan.RatingActivity" android:exported="false"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".HelpDetailActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.medical_kham_benh.DoctorStatsActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".PriceListActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.appointment_lich_hen.DoctorScheduleActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".UserGuideActivity" android:exported="false"
+
+        <activity android:name=".ui_giao_dien.info_tin_tuc_ho_tro.HelpDetailActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ContactActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.payment_thanh_toan.PriceListActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ServicesActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.info_tin_tuc_ho_tro.UserGuideActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".ServiceDetailActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.info_tin_tuc_ho_tro.ContactActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".InvoiceActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.payment_thanh_toan.ServicesActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".PaymentActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.payment_thanh_toan.ServiceDetailActivity" android:exported="false"
             android:screenOrientation="portrait"/>
-        <activity android:name=".NewsActivity" android:exported="false"
+        <activity android:name=".ui_giao_dien.payment_thanh_toan.InvoiceActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui_giao_dien.payment_thanh_toan.PaymentActivity" android:exported="false"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".ui_giao_dien.info_tin_tuc_ho_tro.NewsActivity" android:exported="false"
             android:screenOrientation="portrait"/>
     </application>
 </manifest>
